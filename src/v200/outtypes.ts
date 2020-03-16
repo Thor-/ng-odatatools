@@ -1,4 +1,4 @@
-import { IODataSchema } from './outtypes';
+
 export interface IInterfaces {
     ComplexTypes: ComplexType[];
     EntityTypes: EntityType[];

@@ -17,4 +17,3 @@ testRunner.configure({
     useColors: true // colored output from test results
 });
 module.exports = testRunner;
-//# sourceMappingURL=index.js.map

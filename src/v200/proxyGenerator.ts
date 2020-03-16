@@ -480,7 +480,7 @@ function _getParameters(parameters: Parameter[]): string {
   return ret.substr(0, ret.length - 2);
 }
 
-function _getReturnType(returntype: ReturnType[]): ISimpleType {
+function _getReturnType(returntype: ReturnType<any>[]): ISimpleType {
   if (!returntype)
     return {
       Name: "void",

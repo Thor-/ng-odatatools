@@ -327,7 +327,7 @@ function _getParameters(parameters: Parameter[]): string {
     return ret.substr(0, ret.length - 2);
 }
 
-function _getReturnType(returntype: ReturnType[]): string {
+function _getReturnType(returntype: ReturnType<any>[]): string {
     if (!returntype)
         return "void"
     return returntype[0].$.Type;

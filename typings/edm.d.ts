@@ -118,7 +118,7 @@ interface Method {
         IsBound: boolean;
     }
     Parameter?: Parameter[]
-    ReturnType?: ReturnType[]
+    ReturnType?: ReturnType<any>[]
 
     // added by proxygenerator:
     IsBoundToCollection?: boolean;
@@ -128,7 +128,7 @@ interface Method {
     Type: ftype
 }
 
-interface ReturnType {
+interface ReturnTypee {
     $: {
         Type: string;
     }

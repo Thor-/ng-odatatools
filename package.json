@@ -86,7 +86,7 @@
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
+        "compile": "tsc",
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
@@ -101,7 +101,7 @@
         "jasmine-core": "2.8.0",
         "mocha": "4.0.1",
         "qunitjs": "2.4.1",
-        "typescript": "2.6.2"
+        "typescript": "3.8.3"
     },
     "dependencies": {
         "fs-extra": "4.0.3",
