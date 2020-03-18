@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+// import * as vscode from "vscode";
 import { Settings } from "./Settings";
 
 export class Log {

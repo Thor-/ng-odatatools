@@ -18,14 +18,14 @@ import {
   IParameter,
   ISimpleType
 } from "./outtypes";
-import {
-  window,
-  TextEdit,
-  Range,
-  commands,
-  ExtensionContext,
-  workspace
-} from "vscode";
+// import {
+//   window,
+//   TextEdit,
+//   Range,
+//   commands,
+//   ExtensionContext,
+//   workspace
+// } from "vscode";
 import { Global } from "../extension";
 import { Log } from "../log";
 import * as enumerable from "linq-es2015";
@@ -55,7 +55,7 @@ const log = new Log("proxyGeneratorV200");
 
 hb.logger.log = (level, obj) => {
   // TODO: Forward loglevel;
-  log.Info("# " + obj);
+  console.log("# " + obj);
 };
 
 export async function generateProxy(
@@ -65,38 +65,38 @@ export async function generateProxy(
 ) {
   // window.showInformationMessage("Select import type (ambient or modular) for generation.");
 
-  log.Debug("Getting proxy json from metadata");
+  console.log("Getting proxy json from metadata");
   let schemas = getProxy(
     options.source.replace("$metadata", ""),
     metadata["edmx:DataServices"][0],
     options
   );
 
-  log.Debug("Parsing template");
+  // console.log("Parsing template", schemas);
   const proxystring = parseTemplate(options, schemas, templates);
 
   // proxystring = await addActionsAndFunctions(proxystring, metadata["edmx:DataServices"][0]);
   // let proxystring = surroundWithNamespace(metadata["edmx:DataServices"][0], options, proxystring);
 
-  log.Info("Updating current file.");
-  await window.activeTextEditor.edit(editbuilder => {
-    editbuilder.replace(
-      new Range(
-        0,
-        0,
-        window.activeTextEditor.document.lineCount - 1,
-        window.activeTextEditor.document.lineAt(
-          window.activeTextEditor.document.lineCount - 1
-        ).text.length
-      ),
-      proxystring
-    );
-  });
+  console.log("Updating current file.");
+  // await window.activeTextEditor.edit(editbuilder => {
+  //   editbuilder.replace(
+  //     new Range(
+  //       0,
+  //       0,
+  //       window.activeTextEditor.document.lineCount - 1,
+  //       window.activeTextEditor.document.lineAt(
+  //         window.activeTextEditor.document.lineCount - 1
+  //       ).text.length
+  //     ),
+  //     proxystring
+  //   );
+  // });
 
-  log.Info("Successfully pasted data. Formatting Document.");
-  commands
-    .executeCommand("editor.action.formatDocument")
-    .then(() => log.Info("Finished"));
+  console.log("Successfully pasted data. Formatting Document.", proxystring);
+  // commands
+  //   .executeCommand("editor.action.formatDocument")
+  //   .then(() => console.log("Finished"));
 
   // log.appendLine("Copying Proxy Base module");
   // if (options.modularity === "Ambient") {
@@ -104,17 +104,32 @@ export async function generateProxy(
   //     fs.createReadStream(path.join(Global.context.extensionPath, "dist", "odataproxybaseAsync.ts")).pipe(fs.createWriteStream(path.join(path.dirname(window.activeTextEditor.document.fileName), "odataproxybase.ts")));
   // }
 
-  // else {
-  //     fs.createReadStream(path.join(Global.context.extensionPath, "dist", "odataproxybaseAsyncModular.ts")).pipe(fs.createWriteStream(path.join(path.dirname(window.activeTextEditor.document.fileName), "odataproxybase.ts")));
-  //     fs.createReadStream(path.join(Global.context.extensionPath, "dist", "odatajs.d.ts")).pipe(fs.createWriteStream(path.join(path.dirname(window.activeTextEditor.document.fileName), "odatajs.d.ts")));
+  // else  {
+    // else {
+      //     fs.createReadStream(path.join(Global.context.extensionPath, "dist", "odatajs.d.ts")).pipe(fs.createWriteStream(path.join(path.dirname(window.activeTextEditor.document.fileName), "odatajs.d.ts")));
+      // 
+      // }
+      
+      try {
+      //  fs.createReadStream(path.join(Global.context.extensionPath, "dist", "odataproxybaseAsyncModular.ts")).pipe(fs.createWriteStream(path.join(path.dirname(window.activeTextEditor.document.fileName), "odataproxybase.ts")));
+      //  fs.createReadStream(path.join("odataproxybaseAsyncModular.ts")).pipe(fs.createWriteStream("odataproxybase.ts"));
+      //  fs.createReadStream(path.join("odatajs.d.ts")).pipe(fs.createWriteStream(path.join("odatajs.d.ts")));
+      fs.writeFileSync('proxy.ts', proxystring);
+  } catch (e) {
+    console.log('error creating file', e);
+  }
+
+  console.log('created files');     
   // }
   // Global.AddToRecentlyUsedA ddresses(options.source);
+
+  // fs.
 }
 
 function getUnboundActionsAndFunctions(ecschema: Schema): Method[] {
   let all: Method[] = [];
   if (ecschema.Action) {
-    log.Info("Found " + ecschema.Action.length + " OData Actions");
+    console.log("Found " + ecschema.Action.length + " OData Actions");
     let acts = ecschema.Action.filter(x => !x.$.IsBound);
     for (let a of acts) {
       a.Type = "Function";
@@ -122,7 +137,7 @@ function getUnboundActionsAndFunctions(ecschema: Schema): Method[] {
     }
   }
   if (ecschema.Function) {
-    log.Info("Found " + ecschema.Function.length + " OData Functions");
+    console.log("Found " + ecschema.Function.length + " OData Functions");
     let fcts = ecschema.Function.filter(x => !x.$.IsBound);
     for (let f of fcts) {
       f.Type = "Function";
@@ -548,14 +563,16 @@ function parseTemplate(
     Header: createHeader(generatorSettings)
   };
 
-  log.Info("Produced Data:");
-  try {
-    log.Info(JSON.stringify(proxy, null, 2));
-  } catch (error) {}
+  // // console.log("Produced Data:");
+  // try {
+  //   // console.log(JSON.stringify(proxy, null, 2));
+  // } catch (error) {}
 
   const template = hb.compile(templates[generatorSettings.useTemplate], {
     noEscape: true
   });
+
+  console.log('template', template(proxy));
 
   try {
     return template(proxy);

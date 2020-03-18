@@ -11,7 +11,7 @@ import {
 } from '../helper';
 import * as request from 'request';
 import * as xml2js from 'xml2js';
-import { window, TextEdit, Range, commands, workspace } from 'vscode';
+// import { window, TextEdit, Range, commands, workspace } from 'vscode';
 import { Global } from '../extension';
 import { Log } from '../log';
 import * as fs from 'fs';
@@ -21,11 +21,11 @@ import * as hb from 'handlebars';
 import { IODataEntities, IEntityType, IComplexType, IEnum } from './outtypes'
 
 export async function getInterfaces() {
-    window.showErrorMessage("Deprecated in Version 2.0. Please use the Proxy functions to get metadata from your OData Service");
+    // window.showErrorMessage("Deprecated in Version 2.0. Please use the Proxy functions to get metadata from your OData Service");
 }
 
 export async function updateInterfaces() {
-    window.showErrorMessage("Deprecated in Version 2.0. Please use the Proxy functions to get metadata from your OData Service");
+    // window.showErrorMessage("Deprecated in Version 2.0. Please use the Proxy functions to get metadata from your OData Service");
 }
 
 type Partial<T> = {[P in keyof T]?: T[P]}

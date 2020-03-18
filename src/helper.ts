@@ -2,9 +2,9 @@ import { IEntityType, ISimpleType } from './v200/outtypes';
 import { Log } from './log';
 import * as xml2js from 'xml2js';
 import * as request from 'request';
-import { window, workspace } from "vscode";
+// import { window, workspace } from "vscode";
 import * as path from 'path';
-import { Global } from './extension';
+// import { Global } from './extension';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as mkd from 'mkdirp';
@@ -67,7 +67,7 @@ export async function getMetadata(maddr: string, options?: request.CoreOptions):
                         if (!data["edmx:Edmx"]) {
                             log.Error("Received invalid data:\n");
                             log.Error(data.toString());
-                            return reject(window.showErrorMessage("Response is not valid oData metadata. See output for more information"));
+                            // return reject(window.showErrorMessage("Response is not valid oData metadata. See output for more information"));
                         }
                         if (data["edmx:Edmx"])
                             return resolve(data["edmx:Edmx"]);
@@ -84,37 +84,49 @@ export async function getMetadata(maddr: string, options?: request.CoreOptions):
     });
 }
 
+// @ts-ignore
 export async function GetOutputStyleFromUser(): Promise<Modularity> {
     log.TraceEnterFunction();
-    return await window.showQuickPick(["Modular", "Ambient"], {
-        placeHolder: "Select to generate the service as a modular or ambient version."
-    }) as Modularity;
+//     return await window.showQuickPick(["Modular", "Ambient"], {
+//         placeHolder: "Select to generate the service as a modular or ambient version."
+//     }) as Modularity;
+// }
 }
 
 export function getModifiedTemplates(): { [x: string]: string } {
     log.TraceEnterFunction();
-    let files: string[];
-    const rootpath = workspace.rootPath;
+    // let files: string[];
+    // const rootpath = workspace.rootPath;
     let ret: { [x: string]: string } = {};
-    try {
-        files = fs.readdirSync(path.join(rootpath, ".vscode", "odatatools", "templates"));
-        if (files.length == 0)
-            throw new Error("No templates found");
-    } catch (error) {
-        try {
-            fs.mkdirSync(path.join(rootpath, ".vscode", "odatatools"));
-            fs.mkdirSync(path.join(rootpath, ".vscode", "odatatools", "templates"));
-        } catch (error) {
+    // try {
+    //     files = fs.readdirSync(path.join(rootpath, ".vscode", "odatatools", "templates"));
+    //     if (files.length == 0)
+    //         throw new Error("No templates found");
+    // } catch (error) {
+    //     try {
+    //         fs.mkdirSync(path.join(rootpath, ".vscode", "odatatools"));
+    //         fs.mkdirSync(path.join(rootpath, ".vscode", "odatatools", "templates"));
+    //     } catch (error) {
 
-        }
-        fse.copySync(path.join(Global.context.extensionPath, "dist", "templates", "promise"), path.join(rootpath, ".vscode", "odatatools", "templates"), { recursive: false });
-        files = fs.readdirSync(path.join(rootpath, ".vscode", "odatatools", "templates"));
+    //     }
+    //     fse.copySync(path.join(Global.context.extensionPath, "dist", "templates", "promise"), path.join(rootpath, ".vscode", "odatatools", "templates"), { recursive: false });
+    //     files = fs.readdirSync(path.join(rootpath, ".vscode", "odatatools", "templates"));
+    // }
+    // for (const file of files) {
+    //     // Get all OData Templates
+    //     if (path.extname(file) === ".ot")
+    //         ret[file] = fs.readFileSync(path.join(rootpath, ".vscode", "odatatools", "templates", file), 'utf-8');
+    // }
+
+    try {
+        const files = fs.readdirSync(path.join(""));
+        console.log(files);
+        ret['template'] = fs.readFileSync(path.join("proxy.ot"), 'utf-8');
+    } catch (e) {
+        console.log(e);
     }
-    for (const file of files) {
-        // Get all OData Templates
-        if (path.extname(file) === ".ot")
-            ret[file] = fs.readFileSync(path.join(rootpath, ".vscode", "odatatools", "templates", file), 'utf-8');
-    }
+    
+    console.log('ret', ret);
     return ret;
 }
 
@@ -138,18 +150,18 @@ export function getType(typestring: string): ISimpleType {
 export async function getHostAddressFromUser(): Promise<string> {
     log.TraceEnterFunction();
     let pick: string = "New Entry...";
-    const rul = Global.recentlyUsedAddresses
-    if (rul && rul.length > 0)
-        pick = await window.showQuickPick(["New Entry..."].concat(Global.recentlyUsedAddresses), {
-            placeHolder: "Select from recently used addresses or add new entry"
-        });
-    if (pick === "New Entry...")
-        pick = await window.showInputBox({
-            placeHolder: "http://my.odata.service/service.svc",
-            value: Global.recentlyUsedAddresses.pop(),
-            prompt: "Please enter uri of your oData service.",
-            ignoreFocusOut: true,
-        });
+    // const rul = Global.recentlyUsedAddresses
+    // if (rul && rul.length > 0) {}
+        // pick = await window.showQuickPick(["New Entry..."].concat(Global.recentlyUsedAddresses), {
+        //     placeHolder: "Select from recently used addresses or add new entry"
+        // });
+    if (pick === "New Entry...") {}
+        // pick = await window.showInputBox({
+        //     placeHolder: "http://my.odata.service/service.svc",
+        //     value: Global.recentlyUsedAddresses.pop(),
+        //     prompt: "Please enter uri of your oData service.",
+        //     ignoreFocusOut: true,
+        // });
 
     if (!pick)
         throw new Error("User did not input valid address");
