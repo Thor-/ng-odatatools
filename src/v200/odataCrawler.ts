@@ -11,9 +11,6 @@ import {
 } from '../helper';
 import * as request from 'request';
 import * as xml2js from 'xml2js';
-// import { window, TextEdit, Range, commands, workspace } from 'vscode';
-import { Global } from '../extension';
-import { Log } from '../log';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ncp } from 'ncp';

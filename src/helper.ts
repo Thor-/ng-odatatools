@@ -1,5 +1,4 @@
 import { IEntityType, ISimpleType } from './v200/outtypes';
-import { Log } from './log';
 import * as xml2js from 'xml2js';
 import * as request from 'request';
 // import { window, workspace } from "vscode";
@@ -10,8 +9,6 @@ import * as fse from 'fs-extra';
 import * as mkd from 'mkdirp';
 
 export type Modularity = "Ambient" | "Modular";
-
-const log = new Log("helpers");
 
 export interface GeneratorSettings {
     source: string,
@@ -31,7 +28,6 @@ export class NoHeaderError extends Error {
 }
 
 export function createHeader(options: GeneratorSettings): string {
-    log.TraceEnterFunction();
     // Create update information
     const headerobject = JSON.stringify(options, null, '\t');
     let header = `/**************************************************************************
@@ -46,7 +42,6 @@ Created by odatatools: https://marketplace.visualstudio.com/items?itemName=apazu
 }
 
 export function getGeneratorSettingsFromDocumentText(input: string): TemplateGeneratorSettings {
-    log.TraceEnterFunction();
     const header = input.match(/#ODATATOOLSOPTIONS([\s\S]*)#ODATATOOLSOPTIONSEND/m);
     if (!header)
         throw new NoHeaderError("No valid odata tools header found.");
@@ -54,7 +49,6 @@ export function getGeneratorSettingsFromDocumentText(input: string): TemplateGen
 }
 
 export async function getMetadata(maddr: string, options?: request.CoreOptions): Promise<Edmx> {
-    log.TraceEnterFunction();
     return new Promise<Edmx>((resolve, reject) => {
         let rData = '';
         request.get(maddr, options)
@@ -65,9 +59,7 @@ export async function getMetadata(maddr: string, options?: request.CoreOptions):
                 xml2js.parseString(rData, (err, data) => {
                     try {
                         if (!data["edmx:Edmx"]) {
-                            log.Error("Received invalid data:\n");
-                            log.Error(data.toString());
-                            // return reject(window.showErrorMessage("Response is not valid oData metadata. See output for more information"));
+                            return reject('Response is not valid oData metadata. See output for more information');
                         }
                         if (data["edmx:Edmx"])
                             return resolve(data["edmx:Edmx"]);
@@ -86,7 +78,7 @@ export async function getMetadata(maddr: string, options?: request.CoreOptions):
 
 // @ts-ignore
 export async function GetOutputStyleFromUser(): Promise<Modularity> {
-    log.TraceEnterFunction();
+    // log.TraceEnterFunction();
 //     return await window.showQuickPick(["Modular", "Ambient"], {
 //         placeHolder: "Select to generate the service as a modular or ambient version."
 //     }) as Modularity;
@@ -94,30 +86,8 @@ export async function GetOutputStyleFromUser(): Promise<Modularity> {
 }
 
 export function getModifiedTemplates(): { [x: string]: string } {
-    log.TraceEnterFunction();
-    // let files: string[];
-    // const rootpath = workspace.rootPath;
     let ret: { [x: string]: string } = {};
-    // try {
-    //     files = fs.readdirSync(path.join(rootpath, ".vscode", "odatatools", "templates"));
-    //     if (files.length == 0)
-    //         throw new Error("No templates found");
-    // } catch (error) {
-    //     try {
-    //         fs.mkdirSync(path.join(rootpath, ".vscode", "odatatools"));
-    //         fs.mkdirSync(path.join(rootpath, ".vscode", "odatatools", "templates"));
-    //     } catch (error) {
-
-    //     }
-    //     fse.copySync(path.join(Global.context.extensionPath, "dist", "templates", "promise"), path.join(rootpath, ".vscode", "odatatools", "templates"), { recursive: false });
-    //     files = fs.readdirSync(path.join(rootpath, ".vscode", "odatatools", "templates"));
-    // }
-    // for (const file of files) {
-    //     // Get all OData Templates
-    //     if (path.extname(file) === ".ot")
-    //         ret[file] = fs.readFileSync(path.join(rootpath, ".vscode", "odatatools", "templates", file), 'utf-8');
-    // }
-
+   
     try {
         const files = fs.readdirSync(path.join(""));
         console.log(files);
@@ -131,7 +101,6 @@ export function getModifiedTemplates(): { [x: string]: string } {
 }
 
 export function getType(typestring: string): ISimpleType {
-    log.TraceEnterFunction();
     let m = typestring.match(/Collection\((.*)\)/);
     if (m) {
         return {
@@ -148,7 +117,6 @@ export function getType(typestring: string): ISimpleType {
 }
 
 export async function getHostAddressFromUser(): Promise<string> {
-    log.TraceEnterFunction();
     let pick: string = "New Entry...";
     // const rul = Global.recentlyUsedAddresses
     // if (rul && rul.length > 0) {}
@@ -174,7 +142,6 @@ export async function getHostAddressFromUser(): Promise<string> {
 }
 
 export function getEntityTypeInterface(type: EntityType, schema: Schema): IEntityType {
-    log.TraceEnterFunction();
     const p: Partial<IEntityType> = {
         // Key: type.Key ? type.Key[0].PropertyRef[0].$.Name : undefined,
         Name: type.$.Name,

@@ -26,8 +26,6 @@ import {
 //   ExtensionContext,
 //   workspace
 // } from "vscode";
-import { Global } from "../extension";
-import { Log } from "../log";
 import * as enumerable from "linq-es2015";
 import { Enumerable } from "linq-es2015";
 import * as fs from "fs";
@@ -51,7 +49,7 @@ import {
 } from "../helper";
 
 const methodhook = "//${unboundMethods}";
-const log = new Log("proxyGeneratorV200");
+// const log = new Log("proxyGeneratorV200");
 
 hb.logger.log = (level, obj) => {
   // TODO: Forward loglevel;
@@ -74,56 +72,14 @@ export async function generateProxy(
 
   // console.log("Parsing template", schemas);
   const proxystring = parseTemplate(options, schemas, templates);
-
-  // proxystring = await addActionsAndFunctions(proxystring, metadata["edmx:DataServices"][0]);
-  // let proxystring = surroundWithNamespace(metadata["edmx:DataServices"][0], options, proxystring);
-
-  console.log("Updating current file.");
-  // await window.activeTextEditor.edit(editbuilder => {
-  //   editbuilder.replace(
-  //     new Range(
-  //       0,
-  //       0,
-  //       window.activeTextEditor.document.lineCount - 1,
-  //       window.activeTextEditor.document.lineAt(
-  //         window.activeTextEditor.document.lineCount - 1
-  //       ).text.length
-  //     ),
-  //     proxystring
-  //   );
-  // });
-
-  console.log("Successfully pasted data. Formatting Document.", proxystring);
-  // commands
-  //   .executeCommand("editor.action.formatDocument")
-  //   .then(() => console.log("Finished"));
-
-  // log.appendLine("Copying Proxy Base module");
-  // if (options.modularity === "Ambient") {
-  //     fs.createReadStream(path.join(Global.context.extensionPath, "dist", "odatajs-4.0.0.js")).pipe(fs.createWriteStream(path.join(path.dirname(window.activeTextEditor.document.fileName), "odatajs.js")));
-  //     fs.createReadStream(path.join(Global.context.extensionPath, "dist", "odataproxybaseAsync.ts")).pipe(fs.createWriteStream(path.join(path.dirname(window.activeTextEditor.document.fileName), "odataproxybase.ts")));
-  // }
-
-  // else  {
-    // else {
-      //     fs.createReadStream(path.join(Global.context.extensionPath, "dist", "odatajs.d.ts")).pipe(fs.createWriteStream(path.join(path.dirname(window.activeTextEditor.document.fileName), "odatajs.d.ts")));
-      // 
-      // }
-      
-      try {
-      //  fs.createReadStream(path.join(Global.context.extensionPath, "dist", "odataproxybaseAsyncModular.ts")).pipe(fs.createWriteStream(path.join(path.dirname(window.activeTextEditor.document.fileName), "odataproxybase.ts")));
-      //  fs.createReadStream(path.join("odataproxybaseAsyncModular.ts")).pipe(fs.createWriteStream("odataproxybase.ts"));
-      //  fs.createReadStream(path.join("odatajs.d.ts")).pipe(fs.createWriteStream(path.join("odatajs.d.ts")));
-      fs.writeFileSync('proxy.ts', proxystring);
+  
+  try {
+    fs.writeFileSync('proxy.ts', proxystring);
   } catch (e) {
     console.log('error creating file', e);
   }
 
-  console.log('created files');     
-  // }
-  // Global.AddToRecentlyUsedA ddresses(options.source);
-
-  // fs.
+  console.log('created files');
 }
 
 function getUnboundActionsAndFunctions(ecschema: Schema): Method[] {
@@ -161,7 +117,6 @@ function getProxy(
   metadata: DataService,
   options: TemplateGeneratorSettings
 ): IODataSchema[] {
-  log.TraceEnterFunction();
   // get the entity container
   let schemas: Schema[];
   try { 
@@ -553,7 +508,6 @@ function parseTemplate(
   schemas: IODataSchema[],
   templates: { [key: string]: string }
 ): string {
-  log.TraceEnterFunction();
   if (!generatorSettings.useTemplate) {
     generatorSettings.useTemplate = Object.keys(templates)[0];
   }
@@ -577,8 +531,8 @@ function parseTemplate(
   try {
     return template(proxy);
   } catch (error) {
-    log.Error("Parsing your Template caused an error: ");
-    log.Error(error.message);
+    console.error("Parsing your Template caused an error: ");
+    console.error(error.message);
     throw error;
   }
 }
