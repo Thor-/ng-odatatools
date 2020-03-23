@@ -1,7 +1,7 @@
 import { generateProxy } from './proxyGenerator';
 // import { Global } from '../extension';
 // import { Log } from '../log';
-import { TemplateGeneratorSettings, getModifiedTemplates, getMetadata } from '../helper';
+import { TemplateGeneratorSettings, getModifiedTemplates, getMetadata } from './helper';
 // import { window, Range, commands } from 'vscode';
 
 // const log = new Log("v200commands");

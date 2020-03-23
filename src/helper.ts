@@ -1,4 +1,4 @@
-import { IEntityType, ISimpleType } from './v200/outtypes';
+import { IEntityType, ISimpleType } from './outtypes';
 import * as xml2js from 'xml2js';
 import * as request from 'request';
 // import { window, workspace } from "vscode";

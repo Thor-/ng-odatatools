@@ -46,7 +46,7 @@ import {
   TemplateGeneratorSettings,
   getEntityTypeInterface,
   getType
-} from "../helper";
+} from "./helper";
 
 const methodhook = "//${unboundMethods}";
 // const log = new Log("proxyGeneratorV200");

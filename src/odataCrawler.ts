@@ -8,7 +8,7 @@ import {
     GetOutputStyleFromUser,
     getType,
     TemplateGeneratorSettings,
-} from '../helper';
+} from './helper';
 import * as request from 'request';
 import * as xml2js from 'xml2js';
 import * as fs from 'fs';

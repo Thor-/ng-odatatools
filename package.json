@@ -4,18 +4,6 @@
     "description": "Tools for generating clients for OData Webservices",
     "version": "2.0.1",
     "publisher": "apazureck",
-    "engines": {
-        "vscode": "^1.5.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onCommand:odatatools.GetInterfaces",
-        "onCommand:odatatools.UpdateInterfaces",
-        "onCommand:odatatools.GetProxy",
-        "onCommand:odatatools.UpdateProxy"
-    ],
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
         "compile": "tsc",
