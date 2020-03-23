@@ -1,48 +1,28 @@
 import * as hb from "handlebars";
+import * as fs from 'fs';
 import {
   IAction,
   IActionImport,
   IComplexType,
-  IEntityContainer,
   IEntitySet,
   IEntityType,
   IEnum,
-  IEnumType,
   IFunction,
   IFunctionImport,
   IMethod,
-  INavigationProperty,
   INavigationPropertyBinding,
   IODataEntities,
   IODataSchema,
   IParameter,
   ISimpleType
 } from "./outtypes";
-// import {
-//   window,
-//   TextEdit,
-//   Range,
-//   commands,
-//   ExtensionContext,
-//   workspace
-// } from "vscode";
-import * as enumerable from "linq-es2015";
-import { Enumerable } from "linq-es2015";
-import * as fs from "fs";
-import * as path from "path";
-import * as request from "request";
-import * as xml2js from "xml2js";
+
+import * as path from 'path';
+
 import {} from "./outtypes";
 import {
   createHeader,
   GeneratorSettings,
-  getGeneratorSettingsFromDocumentText,
-  getHostAddressFromUser,
-  getMetadata,
-  getModifiedTemplates,
-  GetOutputStyleFromUser,
-  Modularity,
-  NoHeaderError,
   TemplateGeneratorSettings,
   getEntityTypeInterface,
   getType
@@ -59,10 +39,8 @@ hb.logger.log = (level, obj) => {
 export async function generateProxy(
   metadata: Edmx,
   options: TemplateGeneratorSettings,
-  templates: { [key: string]: string }
+  template: string
 ) {
-  // window.showInformationMessage("Select import type (ambient or modular) for generation.");
-
   console.log("Getting proxy json from metadata");
   let schemas = getProxy(
     options.source.replace("$metadata", ""),
@@ -70,11 +48,14 @@ export async function generateProxy(
     options
   );
 
-  // console.log("Parsing template", schemas);
-  const proxystring = parseTemplate(options, schemas, templates);
+  const proxystring = parseTemplate(options, schemas, template);
   
   try {
-    fs.writeFileSync('proxy.ts', proxystring);
+    proxystring.forEach((string, index) => {
+      fs.writeFileSync(`proxy-${index}.ts`, string);
+
+    });
+
   } catch (e) {
     console.log('error creating file', e);
   }
@@ -506,30 +487,33 @@ function _getRequestParameters(parameters: Parameter[]) {
 function parseTemplate(
   generatorSettings: TemplateGeneratorSettings,
   schemas: IODataSchema[],
-  templates: { [key: string]: string }
-): string {
-  if (!generatorSettings.useTemplate) {
-    generatorSettings.useTemplate = Object.keys(templates)[0];
-  }
-
+  template: string
+): string[] {
+ 
   const proxy = {
     schemas,
     Header: createHeader(generatorSettings)
   };
 
-  // // console.log("Produced Data:");
-  // try {
-  //   // console.log(JSON.stringify(proxy, null, 2));
-  // } catch (error) {}
+  const moduleTemplate = fs.readFileSync(path.join("module.ot"), 'utf-8');
+  const templates = [];
 
-  const template = hb.compile(templates[generatorSettings.useTemplate], {
+  const compiledTemplate = hb.compile(template, {
+    noEscape: true
+  });
+  
+  const compiledModuleTemplate = hb.compile(moduleTemplate, {
     noEscape: true
   });
 
-  console.log('template', template(proxy));
+  templates.push(compiledTemplate(proxy));
 
+  schemas.forEach(schema => {
+    templates.push(compiledModuleTemplate(schema))
+  });
+  
   try {
-    return template(proxy);
+    return templates;
   } catch (error) {
     console.error("Parsing your Template caused an error: ");
     console.error(error.message);

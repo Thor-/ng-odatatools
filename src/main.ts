@@ -1,10 +1,7 @@
 import { generateProxy } from './proxyGenerator';
-// import { Global } from '../extension';
-// import { Log } from '../log';
-import { TemplateGeneratorSettings, getModifiedTemplates, getMetadata } from './helper';
-// import { window, Range, commands } from 'vscode';
-
-// const log = new Log("v200commands");
+import * as fs from 'fs';
+import * as path from 'path';
+import { TemplateGeneratorSettings, getMetadata } from './helper';
 
 export async function createProxy() {
     let generatorSettings: TemplateGeneratorSettings = {
@@ -14,8 +11,6 @@ export async function createProxy() {
         useTemplate: undefined
     };
     try {
-        // TODO: Change to quickpick to provide full file list
-        // let maddr = await getHostAddressFromUser();
         let maddr = 'https://api-iris-dataapi-integration.azurewebsites.net/api/$metadata';
 
         if (!maddr)
@@ -27,12 +22,10 @@ export async function createProxy() {
 
         maddr = maddr + "/$metadata";
 
-        // Global.lastval = maddr;
         generatorSettings.source = maddr;
 
-        const templates: { [key: string]: string } = getModifiedTemplates();
-        console.log('templates', templates);
-
+        const templates = fs.readFileSync(path.join("proxy.ot"), 'utf-8');
+        
         // log.Info("Getting Metadata from '" + maddr + "'");
         const metadata = await getMetadata(maddr);
         console.log('metaData', metadata);

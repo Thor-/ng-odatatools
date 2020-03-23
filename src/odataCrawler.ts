@@ -1,29 +1,11 @@
 import {
-    createHeader,
     GeneratorSettings,
     getEntityTypeInterface,
-    getGeneratorSettingsFromDocumentText,
-    getMetadata,
-    getModifiedTemplates,
-    GetOutputStyleFromUser,
-    getType,
-    TemplateGeneratorSettings,
+    getType
 } from './helper';
-import * as request from 'request';
-import * as xml2js from 'xml2js';
-import * as fs from 'fs';
-import * as path from 'path';
-import { ncp } from 'ncp';
-import * as hb from 'handlebars';
+
 import { IODataEntities, IEntityType, IComplexType, IEnum } from './outtypes'
 
-export async function getInterfaces() {
-    // window.showErrorMessage("Deprecated in Version 2.0. Please use the Proxy functions to get metadata from your OData Service");
-}
-
-export async function updateInterfaces() {
-    // window.showErrorMessage("Deprecated in Version 2.0. Please use the Proxy functions to get metadata from your OData Service");
-}
 
 type Partial<T> = {[P in keyof T]?: T[P]}
 

@@ -1,12 +1,6 @@
 import { IEntityType, ISimpleType } from './outtypes';
 import * as xml2js from 'xml2js';
 import * as request from 'request';
-// import { window, workspace } from "vscode";
-import * as path from 'path';
-// import { Global } from './extension';
-import * as fs from 'fs';
-import * as fse from 'fs-extra';
-import * as mkd from 'mkdirp';
 
 export type Modularity = "Ambient" | "Modular";
 
@@ -15,7 +9,6 @@ export interface GeneratorSettings {
     modularity: Modularity,
     requestOptions: request.CoreOptions
 }
-
 
 export interface TemplateGeneratorSettings extends GeneratorSettings {
     useTemplate: string;
@@ -83,21 +76,6 @@ export async function GetOutputStyleFromUser(): Promise<Modularity> {
 //         placeHolder: "Select to generate the service as a modular or ambient version."
 //     }) as Modularity;
 // }
-}
-
-export function getModifiedTemplates(): { [x: string]: string } {
-    let ret: { [x: string]: string } = {};
-   
-    try {
-        const files = fs.readdirSync(path.join(""));
-        console.log(files);
-        ret['template'] = fs.readFileSync(path.join("proxy.ot"), 'utf-8');
-    } catch (e) {
-        console.log(e);
-    }
-    
-    console.log('ret', ret);
-    return ret;
 }
 
 export function getType(typestring: string): ISimpleType {
