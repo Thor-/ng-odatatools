@@ -96,7 +96,7 @@ import * as {{joinNamespace this.Namespace}} from './{{joinNamespace this.Namesp
     {{/if}}
     //EntitySets
     {{#each schema.EntityContainer.EntitySets as |eset|}}
-    export class {{this.Name}}EntitySet extends Base.EntitySet<{{this.EntityType.Fullname}}> {
+    export class {{this.Name}}EntitySet extends Base.EntitySet<{{splitNameSpaceAndType this.EntityType.Fullname}}> {
         constructor(name: string, address: string, key: string, additionalHeaders?: Base.Header) {
             super(name, address, key, additionalHeaders);
         }

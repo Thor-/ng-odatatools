@@ -17,9 +17,15 @@ import {
   ISimpleType
 } from "./outtypes";
 
+import { getChildParentType } from "./helper";
+
 hb.registerHelper('joinNamespace', (value) => {
   var t = value.split(".").join("");
   return t;
+});
+
+hb.registerHelper('splitNameSpaceAndType', (value) => {
+  return getChildParentType(value);
 });
 
 import * as path from 'path';
@@ -207,6 +213,7 @@ function getProxy(
     };
     if (schema.EntityContainer) {
       const ec = schema.EntityContainer[0];
+
       curSchema.EntityContainer = {
         Namespace: schema.$.Namespace,
         Name: ec.$.Name,
@@ -218,6 +225,7 @@ function getProxy(
       };
 
       for (const set of ec.EntitySet) {
+        
         const eset: IEntitySet = {
           EntityType: allBaseTypes.entity.find(x => {
             return x.Fullname === set.$.EntityType;

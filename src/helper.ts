@@ -78,7 +78,7 @@ export async function GetOutputStyleFromUser(): Promise<Modularity> {
 // }
 }
 
-function getChildParentType (type: string) {
+export function getChildParentType (type: string) {
     const typestringSplit = type.split('.');
     if (typestringSplit.length > 2) {
         const childType = typestringSplit[typestringSplit.length -1];
