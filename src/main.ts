@@ -23,17 +23,13 @@ export async function createProxy() {
         maddr = maddr + "/$metadata";
 
         generatorSettings.source = maddr;
-
-        const templates = fs.readFileSync(path.join("proxy.ot"), 'utf-8');
-        
+   
         // log.Info("Getting Metadata from '" + maddr + "'");
         const metadata = await getMetadata(maddr);
-        console.log('metaData', metadata);
+   
+        await generateProxy(metadata, generatorSettings);
 
-        await generateProxy(metadata, generatorSettings, templates);
-
-        // Global.AddToRecentlyUsedAddresses(maddr);
-
+   
     } catch (error) {
         // window.showErrorMessage("Could not create proxy. See output window for detail.");
         // log.Error("Creating proxy returned following error:");

@@ -78,17 +78,42 @@ export async function GetOutputStyleFromUser(): Promise<Modularity> {
 // }
 }
 
+function getChildParentType (type: string) {
+    const typestringSplit = type.split('.');
+    if (typestringSplit.length > 2) {
+        const childType = typestringSplit[typestringSplit.length -1];
+        typestringSplit.pop();
+        const parentType = typestringSplit.join('');
+        type = `${parentType}.${childType}`;
+    }
+
+    return type;
+}
+
 export function getType(typestring: string): ISimpleType {
     let m = typestring.match(/Collection\((.*)\)/);
+
     if (m) {
+
+
         return {
             IsCollection: true,
-            Name: m[1],
+            Name: getChildParentType(m[1]),
             IsVoid: m[1] === "void",
         }
     }
+
+    // const typestringSplit = typestring.split('.');
+    // if (typestringSplit.length > 2) {
+    //     const childType = typestringSplit[typestringSplit.length -1];
+    //     typestringSplit.pop();
+    //     const parentType = typestringSplit.join('');
+    //     typestring = `${parentType}.${childType}`;
+    // }
+
     return {
-        Name: typestring,
+        // get last item after the dot. Join everything before so it's a module... 
+        Name: getChildParentType(typestring),
         IsCollection: false,
         IsVoid: typestring === "void",
     }

@@ -17,6 +17,11 @@ import {
   ISimpleType
 } from "./outtypes";
 
+hb.registerHelper('joinNamespace', (value) => {
+  var t = value.split(".").join("");
+  return t;
+});
+
 import * as path from 'path';
 
 import {} from "./outtypes";
@@ -28,8 +33,6 @@ import {
   getType
 } from "./helper";
 
-const methodhook = "//${unboundMethods}";
-// const log = new Log("proxyGeneratorV200");
 
 hb.logger.log = (level, obj) => {
   // TODO: Forward loglevel;
@@ -38,27 +41,27 @@ hb.logger.log = (level, obj) => {
 
 export async function generateProxy(
   metadata: Edmx,
-  options: TemplateGeneratorSettings,
-  template: string
+  options: TemplateGeneratorSettings
 ) {
-  console.log("Getting proxy json from metadata");
   let schemas = getProxy(
     options.source.replace("$metadata", ""),
     metadata["edmx:DataServices"][0],
     options
   );
 
-  const proxystring = parseTemplate(options, schemas, template);
+  // const template = fs.readFileSync(path.join("templates/proxy.ot"), 'utf-8');
+
+  const proxystring = parseTemplate(options, schemas);
   
-  try {
-    proxystring.forEach((string, index) => {
-      fs.writeFileSync(`proxy-${index}.ts`, string);
+  // try {
+  //   proxystring.forEach((string, index) => {
+  //     fs.writeFileSync(`proxy-${index}.ts`, string);
 
-    });
+  //   });
 
-  } catch (e) {
-    console.log('error creating file', e);
-  }
+  // } catch (e) {
+  //   console.log('error creating file', e);
+  // }
 
   console.log('created files');
 }
@@ -486,21 +489,26 @@ function _getRequestParameters(parameters: Parameter[]) {
 
 function parseTemplate(
   generatorSettings: TemplateGeneratorSettings,
-  schemas: IODataSchema[],
-  template: string
-): string[] {
+  schemas: IODataSchema[]
+): void {
  
   const proxy = {
     schemas,
     Header: createHeader(generatorSettings)
   };
 
-  const moduleTemplate = fs.readFileSync(path.join("module.ot"), 'utf-8');
+  const baseTemplate = fs.readFileSync(path.join("templates/proxy.ot"), 'utf-8');
+
+  const moduleTemplate = fs.readFileSync(path.join("templates/module.ot"), 'utf-8');
   const templates = [];
 
-  const compiledTemplate = hb.compile(template, {
+  const compiledTemplate = hb.compile(baseTemplate, {
     noEscape: true
   });
+
+  fs.mkdirSync('proxy');
+
+  fs.writeFileSync(`proxy/Base.ts`, compiledTemplate(schemas));
   
   const compiledModuleTemplate = hb.compile(moduleTemplate, {
     noEscape: true
@@ -509,16 +517,23 @@ function parseTemplate(
   templates.push(compiledTemplate(proxy));
 
   schemas.forEach(schema => {
-    templates.push(compiledModuleTemplate(schema))
+    const namespace = schema.Namespace.split('.').join('');
+    // templates.push(compiledModuleTemplate(schema))
+    fs.writeFileSync(`proxy/${namespace}.ts`, compiledModuleTemplate(
+      {
+        schema: schema,
+        allSchemas: schemas
+      }
+    ));
   });
   
-  try {
-    return templates;
-  } catch (error) {
-    console.error("Parsing your Template caused an error: ");
-    console.error(error.message);
-    throw error;
-  }
+  // try {
+  //   return templates;
+  // } catch (error) {
+  //   console.error("Parsing your Template caused an error: ");
+  //   console.error(error.message);
+  //   throw error;
+  // }
 }
 
 export function getEdmTypes(
