@@ -1,5 +1,5 @@
 import * as hb from "handlebars";
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import {
   IAction,
   IActionImport,
@@ -16,6 +16,8 @@ import {
   IParameter,
   ISimpleType
 } from "./outtypes";
+
+import { ncp } from 'ncp';
 
 import { getChildParentType } from "./helper";
 
@@ -47,7 +49,8 @@ hb.logger.log = (level, obj) => {
 
 export async function generateProxy(
   metadata: Edmx,
-  options: TemplateGeneratorSettings
+  options: TemplateGeneratorSettings,
+  outDir: string
 ) {
   let schemas = getProxy(
     options.source.replace("$metadata", ""),
@@ -57,7 +60,7 @@ export async function generateProxy(
 
   // const template = fs.readFileSync(path.join("templates/proxy.ot"), 'utf-8');
 
-  const proxystring = parseTemplate(options, schemas);
+  parseTemplate(options, schemas, outDir);
   
   // try {
   //   proxystring.forEach((string, index) => {
@@ -68,8 +71,6 @@ export async function generateProxy(
   // } catch (e) {
   //   console.log('error creating file', e);
   // }
-
-  console.log('created files');
 }
 
 function getUnboundActionsAndFunctions(ecschema: Schema): Method[] {
@@ -217,7 +218,7 @@ function getProxy(
       curSchema.EntityContainer = {
         Namespace: schema.$.Namespace,
         Name: ec.$.Name,
-        EntitySets: [],
+        EntitySets: [], //todo: stays empty?
         Singletons: [],
         FunctionImports: [],
         ActionImports: [],
@@ -250,7 +251,7 @@ function getProxy(
         eset.Functions = getBoundFunctionsToCollections(eset, allBaseTypes);
         curSchema.EntityContainer.EntitySets.push(eset);
       }
-      // getBoundMethodsToEntities(curSchema, allBaseTypes);
+      
       getUnboundMethods(curSchema, schema);
     }
     allschemas.push(curSchema);
@@ -497,7 +498,8 @@ function _getRequestParameters(parameters: Parameter[]) {
 
 function parseTemplate(
   generatorSettings: TemplateGeneratorSettings,
-  schemas: IODataSchema[]
+  schemas: IODataSchema[],
+  outDir: string
 ): void {
  
   const proxy = {
@@ -505,43 +507,53 @@ function parseTemplate(
     Header: createHeader(generatorSettings)
   };
 
-  const baseTemplate = fs.readFileSync(path.join("templates/proxy.ot"), 'utf-8');
+  try {
+    if (!outDir) {
+      throw 'outDir argument not set'
+    }
 
-  const moduleTemplate = fs.readFileSync(path.join("templates/module.ot"), 'utf-8');
-  const templates = [];
+    // const outDir = args.outDir;
 
-  const compiledTemplate = hb.compile(baseTemplate, {
-    noEscape: true
-  });
+    const baseTemplate = fs.readFileSync(path.resolve(__dirname, 'templates/proxy.ot'), 'utf-8');
 
-  fs.mkdirSync('proxy');
+    const moduleTemplate = fs.readFileSync(path.resolve(__dirname, 'templates/module.ot'), 'utf-8');
+    const templates = [];
 
-  fs.writeFileSync(`proxy/Base.ts`, compiledTemplate(schemas));
-  
-  const compiledModuleTemplate = hb.compile(moduleTemplate, {
-    noEscape: true
-  });
+    const compiledTemplate = hb.compile(baseTemplate, {
+      noEscape: true
+    });
 
-  templates.push(compiledTemplate(proxy));
+    fs.emptyDirSync(outDir);
 
-  schemas.forEach(schema => {
-    const namespace = schema.Namespace.split('.').join('');
-    // templates.push(compiledModuleTemplate(schema))
-    fs.writeFileSync(`proxy/${namespace}.ts`, compiledModuleTemplate(
-      {
-        schema: schema,
-        allSchemas: schemas
+    fs.writeFileSync(`${outDir}/Base.ts`, compiledTemplate(schemas));
+    
+    const compiledModuleTemplate = hb.compile(moduleTemplate, {
+      noEscape: true
+    });
+
+    templates.push(compiledTemplate(proxy));
+
+    schemas.forEach(schema => {
+      const namespace = schema.Namespace.split('.').join('');
+      fs.writeFileSync(`${outDir}/${namespace}.ts`, compiledModuleTemplate(
+        {
+          schema: schema,
+          allSchemas: schemas
+        }
+      ));
+    });
+    
+    // ncp
+    ncp(path.resolve(__dirname, '../src/edmTypes.ts'), `${outDir}/edmTypes.ts`, (err) => {
+      if (err) {
+        return console.error(err);
       }
-    ));
-  });
-  
-  // try {
-  //   return templates;
-  // } catch (error) {
-  //   console.error("Parsing your Template caused an error: ");
-  //   console.error(error.message);
-  //   throw error;
-  // }
+      console.log('done!');
+    });
+
+  } catch(e) {
+    console.error(e)
+  }
 }
 
 export function getEdmTypes(

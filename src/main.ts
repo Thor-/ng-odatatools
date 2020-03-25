@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { TemplateGeneratorSettings, getMetadata } from './helper';
 
-export async function createProxy() {
+export async function createProxy(outDir: string) {
     let generatorSettings: TemplateGeneratorSettings = {
         modularity: "Ambient",
         requestOptions: {},
@@ -27,7 +27,7 @@ export async function createProxy() {
         // log.Info("Getting Metadata from '" + maddr + "'");
         const metadata = await getMetadata(maddr);
    
-        await generateProxy(metadata, generatorSettings);
+        await generateProxy(metadata, generatorSettings, outDir);
 
    
     } catch (error) {
@@ -87,4 +87,4 @@ export async function updateProxy() {
     }
 }
 
-createProxy();
+// createProxy();

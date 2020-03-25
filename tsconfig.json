@@ -8,7 +8,7 @@
         ],
         "sourceMap": true,
     },
-    "include": ["**/*"],
+    "include": ["src/**/*", "typings/**/*"],
     "exclude": [
         "node_modules/**/*",
         ".vscode-test",

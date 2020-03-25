@@ -2,37 +2,34 @@
     "name": "odatatools",
     "displayName": "OData Client Generator",
     "description": "Tools for generating clients for OData Webservices",
-    "version": "2.0.1",
+    "version": "1.0.0",
     "publisher": "apazureck",
+    "main": "out/main.js",
+    "bin": "out/cli.js",
     "scripts": {
-        "vscode:prepublish": "tsc -p ./",
         "compile": "tsc && ncp src/templates out/templates && rimraf out/proxy",
-        "postinstall": "node ./node_modules/vscode/bin/install"
+        "createProxy": "node ./out/cli.js --outDir=test2/test123"
     },
     "devDependencies": {
         "@types/fs-extra": "4.0.5",
         "@types/handlebars": "4.0.36",
         "@types/mkdirp": "^0.5.2",
-        "@types/mocha": "2.2.44",
         "@types/ncp": "2.0.1",
         "@types/node": "8.0.55",
         "@types/request": "^2.0.9",
-        "assert": "1.4.1",
-        "jasmine-core": "2.8.0",
-        "mocha": "4.0.1",
         "ncp": "^2.0.0",
-        "qunitjs": "2.4.1",
         "typescript": "3.8.3"
     },
     "dependencies": {
-        "fs-extra": "4.0.3",
+        "@types/minimist": "^1.2.0",
+        "fs-extra": "9.0.0",
         "handlebars": "4.0.11",
-        "linq-es2015": "2.4.29",
+        "minimist": "^1.2.5",
+        "mkdirp": "0.5.1",
         "node-rest-client": "3.1.0",
         "request": "2.83.0",
         "vscode": "1.1.10",
-        "xml2js": "0.4.19",
-        "mkdirp": "0.5.1"
+        "xml2js": "0.4.19"
     },
     "author": {
         "email": "andreas@pazureck.de",
