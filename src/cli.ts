@@ -3,14 +3,13 @@
 import { createProxy } from './main';
 import * as minimist from 'minimist';
 
-type Arguments = {
+export type CliArguments = {
     outDir?: string;
+    endpoint?: string;
   }
 
-const args = minimist<Arguments>(process.argv.slice(2), {
-    string: 'outDir'
+const args = minimist<CliArguments>(process.argv.slice(2), {
+    string: ['outDir', 'endpoint']
 });
 
-console.log('args', args);
-
-createProxy(args.outDir);
+createProxy(args);

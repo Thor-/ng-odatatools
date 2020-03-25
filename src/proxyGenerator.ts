@@ -40,6 +40,7 @@ import {
   getEntityTypeInterface,
   getType
 } from "./helper";
+import { CliArguments } from "./cli";
 
 
 hb.logger.log = (level, obj) => {
@@ -50,7 +51,7 @@ hb.logger.log = (level, obj) => {
 export async function generateProxy(
   metadata: Edmx,
   options: TemplateGeneratorSettings,
-  outDir: string
+  args: CliArguments
 ) {
   let schemas = getProxy(
     options.source.replace("$metadata", ""),
@@ -60,7 +61,7 @@ export async function generateProxy(
 
   // const template = fs.readFileSync(path.join("templates/proxy.ot"), 'utf-8');
 
-  parseTemplate(options, schemas, outDir);
+  parseTemplate(options, schemas, args);
   
   // try {
   //   proxystring.forEach((string, index) => {
@@ -499,7 +500,7 @@ function _getRequestParameters(parameters: Parameter[]) {
 function parseTemplate(
   generatorSettings: TemplateGeneratorSettings,
   schemas: IODataSchema[],
-  outDir: string
+  args: CliArguments
 ): void {
  
   const proxy = {
@@ -508,7 +509,7 @@ function parseTemplate(
   };
 
   try {
-    if (!outDir) {
+    if (!args.outDir) {
       throw 'outDir argument not set'
     }
 
@@ -523,9 +524,9 @@ function parseTemplate(
       noEscape: true
     });
 
-    fs.emptyDirSync(outDir);
+    fs.emptyDirSync(args.outDir);
 
-    fs.writeFileSync(`${outDir}/Base.ts`, compiledTemplate(schemas));
+    fs.writeFileSync(`${args.outDir}/Base.ts`, compiledTemplate(schemas));
     
     const compiledModuleTemplate = hb.compile(moduleTemplate, {
       noEscape: true
@@ -535,7 +536,7 @@ function parseTemplate(
 
     schemas.forEach(schema => {
       const namespace = schema.Namespace.split('.').join('');
-      fs.writeFileSync(`${outDir}/${namespace}.ts`, compiledModuleTemplate(
+      fs.writeFileSync(`${args.outDir}/${namespace}.ts`, compiledModuleTemplate(
         {
           schema: schema,
           allSchemas: schemas
@@ -544,7 +545,7 @@ function parseTemplate(
     });
     
     // ncp
-    ncp(path.resolve(__dirname, '../src/edmTypes.ts'), `${outDir}/edmTypes.ts`, (err) => {
+    ncp(path.resolve(__dirname, '../src/edmTypes.ts'), `${args.outDir}/edmTypes.ts`, (err) => {
       if (err) {
         return console.error(err);
       }

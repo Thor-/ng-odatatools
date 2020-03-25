@@ -1,14 +1,14 @@
 {
     "name": "odatatools",
     "displayName": "OData Client Generator",
-    "description": "Tools for generating clients for OData Webservices",
+    "description": "Tool for generating client for OData Webservices",
     "version": "1.0.0",
-    "publisher": "apazureck",
+    "publisher": "erwinsmit",
     "main": "out/main.js",
     "bin": "out/cli.js",
     "scripts": {
-        "compile": "tsc && ncp src/templates out/templates && rimraf out/proxy",
-        "createProxy": "node ./out/cli.js --outDir=test2/test123"
+        "compile": "tsc && ncp src/templates out/templates",
+        "createProxy": "node ./out/cli.js --outDir=test2/test123 --endpoint=https://api-iris-dataapi-integration.azurewebsites.net/api/$metadata"
     },
     "devDependencies": {
         "@types/fs-extra": "4.0.5",
@@ -32,20 +32,14 @@
         "xml2js": "0.4.19"
     },
     "author": {
-        "email": "andreas@pazureck.de",
-        "name": "Andreas Pazureck"
+        "email": "erwin.smit@gmail.com",
+        "name": "Erwin Smit"
     },
     "keywords": [
         "oData",
         "proxyclient"
     ],
-    "preview": true,
-    "galleryBanner": {
-        "color": "white",
-        "theme": "light"
-    },
     "license": "MIT",
     "bugs": "https://github.com/apazureck/odatatools/issues",
-    "repository": "https://github.com/apazureck/odatatools",
-    "icon": "images/odata.png"
+    "repository": "https://github.com/apazureck/odatatools"
 }

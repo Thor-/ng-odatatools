@@ -2,8 +2,9 @@ import { generateProxy } from './proxyGenerator';
 import * as fs from 'fs';
 import * as path from 'path';
 import { TemplateGeneratorSettings, getMetadata } from './helper';
+import { CliArguments } from './cli';
 
-export async function createProxy(outDir: string) {
+export async function createProxy(args: CliArguments) {
     let generatorSettings: TemplateGeneratorSettings = {
         modularity: "Ambient",
         requestOptions: {},
@@ -11,11 +12,12 @@ export async function createProxy(outDir: string) {
         useTemplate: undefined
     };
     try {
-        let maddr = 'https://api-iris-dataapi-integration.azurewebsites.net/api/$metadata';
+        let maddr = args.endpoint;
 
-        if (!maddr)
-            return;
-
+        if (!maddr) {
+            throw 'No endpoint specified';
+        }
+            
         maddr = maddr.replace("$metadata", "");
         if (maddr.endsWith("/"))
             maddr = maddr.substr(0, maddr.length - 1);
@@ -27,7 +29,7 @@ export async function createProxy(outDir: string) {
         // log.Info("Getting Metadata from '" + maddr + "'");
         const metadata = await getMetadata(maddr);
    
-        await generateProxy(metadata, generatorSettings, outDir);
+        await generateProxy(metadata, generatorSettings, args);
 
    
     } catch (error) {
