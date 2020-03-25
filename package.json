@@ -1,5 +1,5 @@
 {
-    "name": "odatatools",
+    "name": "odatatools-cli",
     "displayName": "OData Client Generator",
     "description": "Tool for generating client for OData Webservices",
     "version": "1.0.0",
@@ -8,12 +8,11 @@
     "bin": "out/cli.js",
     "scripts": {
         "compile": "tsc && ncp src/templates out/templates",
-        "createProxy": "node ./out/cli.js --outDir=test2/test123 --endpoint=https://api-iris-dataapi-integration.azurewebsites.net/api/$metadata"
+        "createProxy": "node ./out/cli.js --outDir=exampledir --endpoint=https://services.odata.org/V4/Northwind/Northwind.svc/$metadata"
     },
     "devDependencies": {
         "@types/fs-extra": "4.0.5",
         "@types/handlebars": "4.0.36",
-        "@types/mkdirp": "^0.5.2",
         "@types/ncp": "2.0.1",
         "@types/node": "8.0.55",
         "@types/request": "^2.0.9",
@@ -25,7 +24,6 @@
         "fs-extra": "9.0.0",
         "handlebars": "4.0.11",
         "minimist": "^1.2.5",
-        "mkdirp": "0.5.1",
         "node-rest-client": "3.1.0",
         "request": "2.83.0",
         "vscode": "1.1.10",
@@ -40,6 +38,6 @@
         "proxyclient"
     ],
     "license": "MIT",
-    "bugs": "https://github.com/apazureck/odatatools/issues",
-    "repository": "https://github.com/apazureck/odatatools"
+    "bugs": "https://github.com/erwinsmit/odatatools/issues",
+    "repository": "https://github.com/erwinsmit/odatatools"
 }

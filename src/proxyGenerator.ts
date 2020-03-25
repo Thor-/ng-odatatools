@@ -59,19 +59,7 @@ export async function generateProxy(
     options
   );
 
-  // const template = fs.readFileSync(path.join("templates/proxy.ot"), 'utf-8');
-
   parseTemplate(options, schemas, args);
-  
-  // try {
-  //   proxystring.forEach((string, index) => {
-  //     fs.writeFileSync(`proxy-${index}.ts`, string);
-
-  //   });
-
-  // } catch (e) {
-  //   console.log('error creating file', e);
-  // }
 }
 
 function getUnboundActionsAndFunctions(ecschema: Schema): Method[] {
@@ -513,8 +501,6 @@ function parseTemplate(
       throw 'outDir argument not set'
     }
 
-    // const outDir = args.outDir;
-
     const baseTemplate = fs.readFileSync(path.resolve(__dirname, 'templates/proxy.ot'), 'utf-8');
 
     const moduleTemplate = fs.readFileSync(path.resolve(__dirname, 'templates/module.ot'), 'utf-8');
@@ -544,7 +530,6 @@ function parseTemplate(
       ));
     });
     
-    // ncp
     ncp(path.resolve(__dirname, '../src/edmTypes.ts'), `${args.outDir}/edmTypes.ts`, (err) => {
       if (err) {
         return console.error(err);
