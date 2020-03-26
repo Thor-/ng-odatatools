@@ -7,16 +7,16 @@ There are 2 big changes in this fork:
 With this tool you can generate a client that allows you to easily create typesafe odata queries. 
 
 ## Getting started
-```npm install --save-dev odatatools-cli```
+`npm install --save-dev odatatools-cli`
 
 In your package.json create a task:
 
-```"generate-odata-proxy": "odatatools-cli --outDir=src/api/proxy --endpoint https://services.odata.org/V4/Northwind/Northwind.svc/$metadata"```
+`"generate-odata-proxy": "odatatools-cli --outDir=src/api/proxy --endpoint https://services.odata.org/V4/Northwind/Northwind.svc/$metadata"`
 
 After you ran this task a folder should be created with all the required javascript modules. It depends on your odata endpoint which file you need to import to get started.
 
 See this gif below for some examples using the Northwind oData endpoint.
 
-[example]: https://raw.githubusercontent.com/erwinsmit/odatatools/master/example.gif "Example implementation"
+![example](https://raw.githubusercontent.com/erwinsmit/odatatools/master/example.gif) 
 
 More documentation will follow.
