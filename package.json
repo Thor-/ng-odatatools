@@ -2,7 +2,7 @@
     "name": "odatatools-cli",
     "displayName": "OData Client Generator",
     "description": "Tool for generating client for OData Webservices",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "erwinsmit",
     "main": "out/main.js",
     "bin": "out/cli.js",
