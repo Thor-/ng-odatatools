@@ -1,4 +1,4 @@
-## Odata V4 Client Generator CLI tool 
+## Odata V4 Client Generator CLI tool (Angular supported)
 This is a fork from this great [package](https://github.com/apazureck/odatatools) developed for vscode.
 There are 2 big changes in this fork:
 - The generated proxy will be using modules instead of namespaces
