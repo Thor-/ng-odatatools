@@ -41,6 +41,7 @@ import {
   getType
 } from "./helper";
 import { CliArguments } from "./cli";
+import { gunzipSync } from "zlib";
 
 
 hb.logger.log = (level, obj) => {
@@ -242,6 +243,7 @@ function getProxy(
       }
       
       getUnboundMethods(curSchema, schema);
+      getBoundMethodsToEntities(curSchema, schema);
     }
     allschemas.push(curSchema);
   }
@@ -305,20 +307,25 @@ function getUnboundMethods(meta: IODataSchema, schema: Schema): void {
 function getBoundMethodsToEntities(meta: IODataSchema, schema: Schema): void {
   if (schema.Action) {
     for (const action of schema.Action) {
-      for (const type of meta.EntityTypes) {
-        const m = getBoundMethod(action, type);
-        if (m && !m.IsBoundToCollection) {
-          type.Actions.push(m);
+      for (const entitiSet of meta.EntityContainer?.EntitySets) {
+        if (entitiSet.EntityType.Fullname == action.Parameter[0].$.Type) {
+          const m = getBoundMethod(action, entitiSet.EntityType);
+          if (m && !m.IsBoundToCollection) {
+            entitiSet.Actions.push(m);
+          }
         }
       }
     }
   }
   if (schema.Function) {
     for (const func of schema.Function) {
-      for (const type of meta.EntityTypes) {
-        const m = getBoundMethod(func, type);
-        if (m && !m.IsBoundToCollection) {
-          type.Functions.push(m);
+      for (const entitiSet of meta.EntityContainer?.EntitySets) {
+        const fnEntityType = getEntityTypeFromBindingParameter(func.Parameter[0].$.Type);
+        if (entitiSet.EntityType.Fullname == fnEntityType) {
+          const m = getBoundMethod(func, entitiSet.EntityType);
+          if (m && !m.IsBoundToCollection) {
+            entitiSet.Functions.push(m);
+          }
         }
       }
     }
@@ -332,7 +339,7 @@ function getBoundActionsToCollections(
   const ret: IMethod[] = [];
   for (const action of schema.actions) {
     if (action.IsBoundToCollection) {
-      const boundTypeName = action.Parameters[0].Type.Name;
+      const boundTypeName = action.Parameters[0].Type.Type;
       if (set.EntityType.Fullname === boundTypeName) {
         ret.push(action);
       }
@@ -348,8 +355,10 @@ function getBoundFunctionsToCollections(
   const ret: IMethod[] = [];
   for (const func of schema.functions) {
     if (func.IsBoundToCollection) {
-      const boundTypeName = func.Parameters[0].Type.Name;
+      const boundTypeName = func.Parameters[0].Type.Type;      
       if (set.EntityType.Fullname === boundTypeName) {
+        // Exclude first bindingParameter from collection bounded function
+        func.Parameters = func.Parameters.filter((_, i) => i > 0);
         ret.push(func);
       }
     }
@@ -375,6 +384,13 @@ function getUnboundMethod(method: Method): IMethod {
   };
 }
 
+function getEntityTypeFromBindingParameter(parameterType: string): string {
+  const collectionMatch = parameterType.match(
+    /^(Collection\()?(.*[^\)])\)?$/
+  );
+  return collectionMatch[2];
+}
+
 function getBoundMethod(method: Method, type: IEntityType): IMethod {
   // check if method is bound
   if (!method.$.IsBound) {
@@ -386,17 +402,28 @@ function getBoundMethod(method: Method, type: IEntityType): IMethod {
   }
   // get first parameter, which is the binding parameter and check if it is a collection
   const collectionMatch = method.Parameter[0].$.Type.match(
-    /^(Collection\()?(.*)\)?$/
+    /^(Collection\()?(.*[^\)])\)?$/
   );
+  const isCollectionBound = collectionMatch[1] === "Collection(";
   if (collectionMatch[2] === type.Fullname) {
-    // map to get copy of array
-    const params = method.Parameter.map(x => x);
-    params.splice(0, 1);
+    const keyParameter = {
+      $: {
+        Name: type.Key.Name,
+        Type: type.Key.Type.Name,
+        Nullable: false
+      }
+    };
+
+    const params: Parameter[] = [
+      ...(!isCollectionBound ? [keyParameter] : []),
+      ...method.Parameter.filter((_, i) => i > 0)
+    ];
+
     const outaction: IMethod = {
-      IsBoundToCollection: collectionMatch[1] === "Collection(",
+      IsBoundToCollection: isCollectionBound,
       IsBound: method.$.IsBound || false,
       Name: method.$.Name,
-      FullName: type.Namespace + method.$.Name,
+      FullName: (type.Namespace || '') + method.$.Name,
       ReturnType: _getReturnType(method.ReturnType),
       Parameters: getParameters(params)
     };
@@ -437,7 +464,8 @@ function _getReturnType(returntype: ReturnType<any>[]): ISimpleType {
     return {
       Name: "void",
       IsCollection: false,
-      IsVoid: true
+      IsVoid: true,
+      Type: 'void'
     };
   return getType(returntype[0].$.Type);
 }
@@ -501,9 +529,9 @@ function parseTemplate(
       throw 'outDir argument not set'
     }
 
-    const baseTemplate = fs.readFileSync(path.resolve(__dirname, 'templates/proxy.ot'), 'utf-8');
+    const baseTemplate = fs.readFileSync(path.resolve(__dirname, 'templates/proxy.hbs'), 'utf-8');
 
-    const moduleTemplate = fs.readFileSync(path.resolve(__dirname, 'templates/module.ot'), 'utf-8');
+    const moduleTemplate = fs.readFileSync(path.resolve(__dirname, 'templates/module.hbs'), 'utf-8');
     const templates = [];
 
     const compiledTemplate = hb.compile(baseTemplate, {

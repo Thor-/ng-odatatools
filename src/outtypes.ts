@@ -139,4 +139,5 @@ export interface ISimpleType {
     Name: string;
     IsCollection: boolean;
     IsVoid: boolean;
+    Type: string;
 }

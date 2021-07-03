@@ -17,3 +17,5 @@ node_modules
 /test/ODataTestService/ODataTestService/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 /test/ODataTestService/packages
 /test/ODataTestService/ODataTestService.Tests/bin/Debug
+.history
+exampledir

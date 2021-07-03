@@ -6,6 +6,8 @@ There are 2 big changes in this fork:
 
 With this tool you can generate a client that allows you to easily create typesafe odata queries. 
 
+See Changelog below.
+
 ## Getting started
 `npm install --save-dev odatatools-cli`
 
@@ -19,4 +21,7 @@ See this gif below for some examples using the Northwind oData endpoint.
 
 ![example](https://raw.githubusercontent.com/erwinsmit/odatatools/master/example.gif) 
 
-More documentation will follow.
+## Changelog
+
+**2021-07-03**
+- Fixed bound Actions and Functions

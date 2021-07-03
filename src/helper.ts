@@ -94,12 +94,11 @@ export function getType(typestring: string): ISimpleType {
     let m = typestring.match(/Collection\((.*)\)/);
 
     if (m) {
-
-
         return {
             IsCollection: true,
             Name: getChildParentType(m[1]),
             IsVoid: m[1] === "void",
+            Type: m[1]
         }
     }
 
@@ -116,6 +115,7 @@ export function getType(typestring: string): ISimpleType {
         Name: getChildParentType(typestring),
         IsCollection: false,
         IsVoid: typestring === "void",
+        Type: typestring
     }
 }
 

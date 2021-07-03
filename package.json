@@ -8,7 +8,7 @@
     "bin": "out/cli.js",
     "scripts": {
         "compile": "tsc && ncp src/templates out/templates",
-        "createProxy": "node ./out/cli.js --outDir=exampledir --endpoint=https://services.odata.org/V4/Northwind/Northwind.svc/$metadata"
+        "createProxy": "node ./out/cli.js --outDir=exampledir --endpoint=http://localhost:50846/odata/$metadata"
     },
     "devDependencies": {
         "@types/fs-extra": "4.0.5",
