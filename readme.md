@@ -24,4 +24,5 @@ See this gif below for some examples using the Northwind oData endpoint.
 ## Changelog
 
 **2021-07-03**
-- Fixed bound Actions and Functions
+- Fixed bound Actions and Functions;
+- Integrated Angular;
