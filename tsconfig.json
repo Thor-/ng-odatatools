@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "CommonJS",
         "target": "es6",
-        "outDir": "./out",
+        "outDir": "./dist",
         "lib": [
             "es6"
         ],
@@ -12,6 +12,6 @@
     "include": ["src/**/*", "typings/**/*"],
     "exclude": [
         "node_modules/**/*",
-        "out"
+        "dist"
     ]
 }
