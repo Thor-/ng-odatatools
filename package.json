@@ -8,7 +8,8 @@
     "bin": "out/cli.js",
     "scripts": {
         "compile": "tsc && ncp src/templates out/templates",
-        "createProxy": "node ./out/cli.js --outDir=exampledir --endpoint=http://localhost:50846/odata/$metadata"
+        "createProxy": "node ./out/cli.js --outDir=exampledir --endpoint=http://localhost:50846/odata/$metadata",
+        "postinstall": "tsc && ncp src/templates out/templates"
     },
     "devDependencies": {
         "@types/fs-extra": "4.0.5",
