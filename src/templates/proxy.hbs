@@ -439,7 +439,7 @@ export interface Request {
 export interface Header { [name: string]: string }
 
 export class oData {
-  static async request<TResult>(request: Request, http: HttpClient): Observable<TResult> {
+  static request<TResult>(request: Request, http: HttpClient): Observable<TResult> {
     const headers = new HttpHeaders();
     Object.entries(request.headers).forEach(entry => headers.append(entry[0], entry[1]));
     return http.request<TResult>(request.method, request.requestUri, {
