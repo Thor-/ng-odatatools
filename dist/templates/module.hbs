@@ -40,7 +40,7 @@ export type {{this.Name}} = {{#each this.Members}}"{{this.Key}}"{{#unless @last}
 // Entity container
 {{#if schema.EntityContainer}}
 export class {{schema.EntityContainer.Name}} extends Base.ProxyBase {
-    constructor(protected address: string, protected http: HttpClient, protected name?: string, protected additionalHeaders?: Base.Header) {
+    constructor(protected http: HttpClient, address: string, name?: string, additionalHeaders?: Base.Header) {
         super(address, name, additionalHeaders);
         {{#each schema.EntityContainer.EntitySets}}
         this.{{this.Name}} = new {{this.Name}}EntitySet("{{this.Name}}", address, "{{this.EntityType.Key.Name}}", http, additionalHeaders);

@@ -394,7 +394,7 @@ export interface ListWithCount<T> {
         requestUri: requri
       }
       return oData.request<TResult>(request, this.http).pipe(
-        map((data: any) => data.value || data),
+        map((data: any) => data && data.value ? data.value : data),
         catchError(error => throwError(() => error.name + " " + error.message + " | " + (error.response | error.response.statusText) + ":" + (error.response | error.response.body)))
       );
     }
@@ -413,7 +413,7 @@ export interface ListWithCount<T> {
         data: value && Object.keys(value).length ? value : null
       }
       return oData.request<TResult>(request, this.http).pipe(
-        map((data: any) => data.value || data),
+        map((data: any) => data && data.value ? data.value : data),
         catchError(error => throwError(() => error.name + " " + error.message + " | " + (error.response | error.response.statusText) + ":" + (error.response | error.response.body)))
       );
     }
