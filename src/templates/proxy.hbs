@@ -386,7 +386,7 @@ export interface ListWithCount<T> {
 
     Function<TResult>(methodName: string, params?: any): Observable<TResult> {
       const methodParams = params ? Object.entries(params).map(([key, value]) => `${key}=${oData.quoteString(value)}`) : [];
-      const requri = this.Address + `/(${key})/${methodName}` + (methodParams.length ? `(${methodParams.join(',')})` : '');
+      const requri = this.Address + `/${methodName}` + (methodParams.length ? `(${methodParams.join(',')})` : '');
       this.emptyQuery();
       let request: Request = {
         headers: this.Headers,
