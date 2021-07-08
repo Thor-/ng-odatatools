@@ -105,11 +105,17 @@ export class {{this.Name}}EntitySet extends Base.EntitySet<{{splitNameSpaceAndTy
     {{this.Name}}({{#each this.Parameters}}{{this.Name}}: {{this.Type.Name}}{{#if this.Type.IsCollection}}[]{{/if}}{{#unless @last}}, {{/unless}}{{/each}}): Observable<{{this.ReturnType.Name}}{{#if this.ReturnType.IsCollection}}[]{{/if}}> {
         const data = {
             {{#each this.Parameters}}
-            {{this.Name}}
-            {{#unless @last}},{{/unless}}
+            {{#unless this.IsBoundToCollection}}
+            {{#unless @first}}
+            {{this.Name}}{{#unless @last}},{{/unless}}
+            {{/unless}}
+            {{else}}
+            {{this.Name}}{{#unless @last}},{{/unless}}
+            {{/unless}}                
             {{/each}}
         };
-        return this.Function<{{this.ReturnType.Name}}{{#if this.ReturnType.IsCollection}}[]{{/if}}>("{{#if schema.Namespace}}{{schema.Namespace}}.{{/if}}{{this.Name}}", data);        
+        const key = `${ {{#unless this.IsBoundToCollection}}{{this.Parameters.0.Name}}{{else}}""{{/unless}} }`;
+        return this.Function<{{this.ReturnType.Name}}{{#if this.ReturnType.IsCollection}}[]{{/if}}>("{{#if schema.Namespace}}{{schema.Namespace}}.{{/if}}{{this.Name}}", key, data);        
     }
     {{/each}}
 }
