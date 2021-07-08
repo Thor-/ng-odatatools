@@ -103,7 +103,7 @@ export class {{this.Name}}EntitySet extends Base.EntitySet<{{splitNameSpaceAndTy
             {{/unless}}                
             {{/each}}
         };
-        {{#if this.IsBoundToCollection}}const key = null;{{/if}}
+        {{#if this.IsBoundToCollection}}const key = '';{{/if}}
         return this.Action<{{this.ReturnType.Name}}{{#if this.ReturnType.IsCollection}}[]{{/if}}>("{{#if schema.Namespace}}{{schema.Namespace}}.{{/if}}{{this.Name}}", key + "", data);        
     }
     {{/each}}
@@ -123,7 +123,7 @@ export class {{this.Name}}EntitySet extends Base.EntitySet<{{splitNameSpaceAndTy
             {{~/each}}
             {{~/if}}
         };
-        const key = {{#unless this.IsBoundToCollection}}`${ {{this.Parameters.0.Name}} }`{{else}}null{{/unless}};
+        const key = {{#unless this.IsBoundToCollection}}`${ {{this.Parameters.0.Name}} }`{{else}}''{{/unless}};
         return this.Function<{{this.ReturnType.Name}}{{#if this.ReturnType.IsCollection}}[]{{/if}}>("{{#if schema.Namespace}}{{schema.Namespace}}.{{/if}}{{this.Name}}", key + "", data);        
     }
     {{/each}}
