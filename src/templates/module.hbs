@@ -92,28 +92,24 @@ export class {{this.Name}}EntitySet extends Base.EntitySet<{{splitNameSpaceAndTy
     {{#if this.Actions.length}}// Bound to entity Actions{{/if}}
     {{#each this.Actions}}
     {{this.Name}}({{#each this.Parameters}}{{#if @first}}key: {{eset.EntityType.Key.Type.Name}}{{else}}{{this.Name}}: {{this.Type.Name}}{{#if this.Type.IsCollection}}[]{{/if}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}): Observable<{{this.ReturnType.Name}}{{#if this.ReturnType.IsCollection}}[]{{/if}}> {
-        let request: Base.Request = {
-            headers: this.Headers,
-            method: "POST",
-            requestUri: this.Address + "(" + key + ")/{{#if schema.Namespace}}{{schema.Namespace}}.{{/if}}{{this.Name}}",
-            data: {
-                {{~#each this.Parameters}}{{~#unless @first}}
-                {{this.Name}}: {{this.Name}},
-                {{~/unless}}{{~/each}}
-            },
-        }
-        return Base.oData.request(request, this.http);
+        const data = {
+            {{~#each this.Parameters}}
+            {{~#unless @first}}{{this.Name}}{{#unless @last}},{{/unless}}{{~/unless}}            
+            {{~/each}}
+        };
+        return this.Action<{{this.ReturnType.Name}}{{#if this.ReturnType.IsCollection}}[]{{/if}}>("{{#if schema.Namespace}}{{schema.Namespace}}.{{/if}}{{this.Name}}", `${key}`, data);        
     }
     {{/each}}
     {{#if this.Functions.length}}// Bound to entity Functions{{/if}}
     {{#each this.Functions}}
     {{this.Name}}({{#each this.Parameters}}{{this.Name}}: {{this.Type.Name}}{{#if this.Type.IsCollection}}[]{{/if}}{{#unless @last}}, {{/unless}}{{/each}}): Observable<{{this.ReturnType.Name}}{{#if this.ReturnType.IsCollection}}[]{{/if}}> {
-        let request: Base.Request = {
-            headers: this.Headers,
-            method: "GET",
-            requestUri: this.Address + {{#unless this.IsBoundToCollection}}"(" + {{this.Parameters.0.Name}} + ")"{{/unless}} + "/{{#if schema.Namespace}}{{schema.Namespace}}.{{/if}}{{this.Name}}({{#if this.IsBoundToCollection}}{{this.Parameters.0.Name}}="+{{this.Parameters.0.Name}}+",{{/if}}{{~#each this.Parameters}}{{#unless @first}}{{this.Name}}="+{{this.Name}}+"{{#unless @last}},{{/unless}}{{/unless}}{{~/each}})",
-        }
-        return Base.oData.request(request, this.http);
+        const data = {
+            {{#each this.Parameters}}
+            {{this.Name}}
+            {{#unless @last}},{{/unless}}
+            {{/each}}
+        };
+        return this.Function<{{this.ReturnType.Name}}{{#if this.ReturnType.IsCollection}}[]{{/if}}>("{{#if schema.Namespace}}{{schema.Namespace}}.{{/if}}{{this.Name}}", data);        
     }
     {{/each}}
 }
