@@ -375,6 +375,7 @@ export interface ListWithCount<T> {
 
     Count(): Observable<number> {
       const requri = this.Address + "/$count/" + this.resolveODataOptions();
+      this.emptyQuery();
       let request: Request = {
         headers: this.Headers,
         method: Method[Method.GET],
