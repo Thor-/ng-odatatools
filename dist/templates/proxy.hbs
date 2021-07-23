@@ -87,7 +87,7 @@ export abstract class ODataQueryFilterOptions<T> extends ODataQueryOptionsGetSin
         * @memberof ODataQueryFilterOptions
         */
     OrderBy(property: keyof T, order?: Order): ODataQueryFilterOptions<T> {
-        this.addToQuery("$orderby=" + property + order ? " " + order : "");
+        this.addToQuery("$orderby=" + property + (order ? " " + order : ""));
         return this;
     }
 
