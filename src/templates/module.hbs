@@ -34,7 +34,11 @@ export interface {{this.Name}} {
 // Enum Types
 {{#each schema.EnumTypes}}
 // Enum Values: {{#each this.Members}}{{this.Key}} = {{this.Value}}{{#unless @last}}, {{/unless}}{{/each}}
-export type {{this.Name}} = {{#each this.Members}}"{{this.Key}}"{{#unless @last}} | {{/unless}}{{/each}};
+export type {{this.Name}} = {
+    {{#each this.Members}}
+    {{this.Key}}: {{this.Value}} {{#unless @last}},{{/unless}}
+    {{/each}}
+};
 {{/each}}
 
 // Entity container
