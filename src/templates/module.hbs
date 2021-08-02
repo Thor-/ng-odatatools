@@ -34,9 +34,9 @@ export interface {{this.Name}} {
 // Enum Types
 {{#each schema.EnumTypes}}
 // Enum Values: {{#each this.Members}}{{this.Key}} = {{this.Value}}{{#unless @last}}, {{/unless}}{{/each}}
-export type {{this.Name}} = {
+export enum {{this.Name}} {
     {{#each this.Members}}
-    {{this.Key}}: {{this.Value}} {{#unless @last}},{{/unless}}
+    {{this.Key}} = {{this.Value}} {{#unless @last}},{{/unless}}
     {{/each}}
 };
 {{/each}}
