@@ -56,7 +56,7 @@ export class {{schema.EntityContainer.Name}} extends Base.ProxyBase {
     
     // Unbound Functions
 
-    {{#each this.EntityContainer.FunctionImports}}
+    {{#each schema.EntityContainer.FunctionImports}}
     {{this.Name}}({{#each this.Function.Parameters}}{{this.Name}}: {{this.Type.Name}}{{#if this.Type.IsCollection}}[]{{/if}}{{#unless @last}}, {{/unless}}{{/each}}): Observable<{{this.Function.ReturnType.Name}}{{#if this.Function.ReturnType.IsCollection}}[]{{/if}}> {
         let request: Base.Request = {
             headers: this.Headers,
@@ -69,7 +69,7 @@ export class {{schema.EntityContainer.Name}} extends Base.ProxyBase {
 
     //Unbound Actions
 
-    {{#each this.EntityContainer.ActionImports}}
+    {{#each schema.EntityContainer.ActionImports}}
     {{this.Name}}({{#each this.Action.Parameters}}{{this.Name}}: {{this.Type.Name}}{{#if this.Type.IsCollection}}[]{{/if}}{{#unless @last}}, {{/unless}}{{/each}}): Observable<{{this.Action.ReturnType.Name}}{{#if this.Action.ReturnType.IsCollection}}[]{{/if}}> {
         let request: Base.Request = {
             headers: this.Headers,
