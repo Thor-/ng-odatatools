@@ -558,7 +558,7 @@ function parseTemplate(
       ));
     });
     
-    ncp(path.resolve(__dirname, '../src/edmTypes.ts'), `${args.outDir}/edmTypes.ts`, (err) => {
+    ncp(path.resolve(__dirname, 'templates/edmTypes.ts'), `${args.outDir}/edmTypes.ts`, (err) => {
       if (err) {
         return console.error(err);
       }

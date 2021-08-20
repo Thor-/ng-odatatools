@@ -1,0 +1,19 @@
+
+export type Duration = string;
+export type Binary = string;
+export type Boolean = boolean;
+export type Byte = number;
+export type Date = string;
+export type DateTimeOffset = string;
+export type Decimal = number;
+export type Double = number;
+export type Guid = string;
+export type Int16 = number;
+export type Int32 = number;
+export type Int64 = number;
+export type SByte = number;
+export type Single = number;
+export type String = string;
+export type TimeOfDay = string;
+export type Stream = string;
+export type GeographyPoint = any;

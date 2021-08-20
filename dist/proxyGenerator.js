@@ -436,7 +436,7 @@ function parseTemplate(generatorSettings, schemas, args) {
                 allSchemas: schemas
             }));
         });
-        ncp_1.ncp(path.resolve(__dirname, '../src/edmTypes.ts'), `${args.outDir}/edmTypes.ts`, (err) => {
+        ncp_1.ncp(path.resolve(__dirname, 'templates/edmTypes.ts'), `${args.outDir}/edmTypes.ts`, (err) => {
             if (err) {
                 return console.error(err);
             }
