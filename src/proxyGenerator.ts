@@ -355,7 +355,7 @@ function getBoundFunctionsToCollections(
   const ret: IMethod[] = [];
   for (const func of schema.functions) {
     if (func.IsBoundToCollection) {
-      const boundTypeName = func.Parameters[0].Type.Type;      
+      const boundTypeName = func.Parameters[0]?.Type.Type;      
       if (set.EntityType.Fullname === boundTypeName) {
         // Exclude first bindingParameter from collection bounded function
         func.Parameters = func.Parameters.filter((_, i) => i > 0);

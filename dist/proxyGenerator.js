@@ -259,10 +259,11 @@ function getBoundActionsToCollections(set, schema) {
     return ret;
 }
 function getBoundFunctionsToCollections(set, schema) {
+    var _a;
     const ret = [];
     for (const func of schema.functions) {
         if (func.IsBoundToCollection) {
-            const boundTypeName = func.Parameters[0].Type.Type;
+            const boundTypeName = (_a = func.Parameters[0]) === null || _a === void 0 ? void 0 : _a.Type.Type;
             if (set.EntityType.Fullname === boundTypeName) {
                 // Exclude first bindingParameter from collection bounded function
                 func.Parameters = func.Parameters.filter((_, i) => i > 0);
