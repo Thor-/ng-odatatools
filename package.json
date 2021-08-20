@@ -6,10 +6,12 @@
     "publisher": "erwinsmit",
     "main": "dist/main.js",
     "bin": "dist/cli.js",
+    "files": [
+        "dist/**/*"
+    ],
     "scripts": {
         "compile": "tsc && ncp src/templates dist/templates",
-        "createProxy": "node ./dist/cli.js --outDir=exampledir --endpoint=http://localhost:50846/odata/$metadata",
-        "postinstall": "tsc && ncp src/templates dist/templates"
+        "createProxy": "node ./dist/cli.js --outDir=exampledir --endpoint=http://localhost:32323/odata/$metadata"
     },
     "devDependencies": {
         "@types/fs-extra": "4.0.5",

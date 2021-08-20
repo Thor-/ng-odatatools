@@ -33,20 +33,7 @@ export async function createProxy(args: CliArguments) {
 
    
     } catch (error) {
-        // window.showErrorMessage("Could not create proxy. See output window for detail.");
-        // log.Error("Creating proxy returned following error:");
-        if (error.originalStack) {}
-            // log.Error(error.originalStack);
-        else { }
-            // log.Error(error.toString());
-
-        // log.Info("Updating current file.");
-        // await window.activeTextEditor.edit((editbuilder) => {
-        //     editbuilder.replace(new Range(0, 0, window.activeTextEditor.document.lineCount - 1, window.activeTextEditor.document.lineAt(window.activeTextEditor.document.lineCount - 1).text.length), createHeader(generatorSettings));
-        // });
-
-        // log.Info("Successfully pasted data. Formatting Document.")
-        // commands.executeCommand("editor.action.formatDocument").then(() => log.Info("Finished"));
+        console.error(error);
     }
 }
 
@@ -67,25 +54,7 @@ export async function updateProxy() {
         // generateProxy(metadata, header, getModifiedTemplates());
 
     } catch (error) {
-        // window.showErrorMessage("Could not create proxy. See output window for detail.");
-        // log.Error("Creating proxy returned following error:");
-        if (error.originalStack) {
-            // log.Error(error.originalStack);
-        }
-        else {
-
-        }
-            // log.Error(error.toString());
-
-        // log.Info("Updating current file.");
-        // await window.activeTextEditor.edit((editbuilder) => {
-        //     editbuilder.replace(new Range(0, 0, window.activeTextEditor.document.lineCount - 1, window.activeTextEditor.document.lineAt(window.activeTextEditor.document.lineCount - 1).text.length), createHeader(error instanceof NoHeaderError ? {
-        //         source: "unknown", modularity: "Ambient", requestOptions: {}
-        //     } : header));
-        // });
-
-        // log.Info("Created header");
-        // commands.executeCommand("editor.action.formatDocument").then(() => log.Info("Finished"));
+        console.log(error);
     }
 }
 
