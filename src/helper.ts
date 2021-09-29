@@ -164,7 +164,8 @@ export function getEntityTypeInterface(type: EntityType, schema: Schema): IEntit
                 Nullable: prop.$.Nullable ? (prop.$.Nullable == "false" ? false : true) : true,
             });
     if (type.Key) {
-        p.Key = p.Properties[0];
+        const keyName = type.Key[0].PropertyRef[0].$.Name;
+        p.Key = p.Properties.find(t => t.Name == keyName);
     }
     if (type.NavigationProperty)
         for (const prop of type.NavigationProperty) {

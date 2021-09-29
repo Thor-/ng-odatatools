@@ -11,7 +11,7 @@
     ],
     "scripts": {
         "compile": "tsc && ncp src/templates dist/templates",
-        "createProxy": "node ./dist/cli.js --outDir=exampledir --endpoint=http://localhost:32323/odata/$metadata"
+        "createProxy": "node ./dist/cli.js --outDir=exampledir --endpoint=http://localhost:50846/odata/$metadata"
     },
     "devDependencies": {
         "@types/fs-extra": "4.0.5",
