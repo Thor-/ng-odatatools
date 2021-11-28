@@ -1,6 +1,6 @@
 {{Header}}
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -58,8 +58,23 @@ export abstract class ODataQueryFilterOptions<T> extends ODataQueryOptionsGetSin
     abstract List(): Observable<T[]>;
     abstract List(withCount: boolean): Observable<ListWithCount<T>>;
 
-    abstract Function<TResult>(methodName: string, key: string, params?: any): Observable<TResult>;
-    abstract Action<T>(methodName: string, key: string, value?: any): Observable<T>;
+    Function<TResult>(methodName: string, key: string, params?: any): Observable<TResult> {
+      return this.Function$Response(methodName, key, params).pipe(
+        map(response => response.body as TResult),
+        map((data: any) => data && data.value ? data.value : data)
+      );
+    }
+
+    Action<T, TResult>(methodName: string, key: string, value?: T): Observable<TResult> {
+      return this.Action$Response(methodName, key, value).pipe(
+        map(response => response.body as T),
+        map((data: any) => data && data.value ? data.value : data),
+      );
+    }
+
+    abstract Function$Response<TResult>(methodName: string, key: string, params?: any): Observable<HttpResponse<TResult>>;
+
+    abstract Action$Response<T, TResult>(methodName: string, key?: string, value?: T): Observable<HttpResponse<TResult>>;
 
     /**
         * Selects properties on the elements. Works on Get() and Get(id).
@@ -385,7 +400,7 @@ export interface ListWithCount<T> {
       return oData.request<number>(request, this.http);
     }
 
-    Function<TResult>(methodName: string, key?: string, params?: any): Observable<TResult> {
+    Function$Response<TResult>(methodName: string, key?: string, params?: any): Observable<HttpResponse<TResult>> {
       const methodParams = params ? Object.entries(params).map(([key, value]) => `${key}=${oData.quoteString(value)}`) : [];
       const requri = this.Address + (key ? `(${key})` : '') + `/${methodName}(${methodParams.join(',')})` + this.resolveODataOptions();
       this.emptyQuery();
@@ -394,8 +409,7 @@ export interface ListWithCount<T> {
         method: Method[Method.GET],
         requestUri: requri
       }
-      return oData.request<TResult>(request, this.http).pipe(
-        map((data: any) => data && data.value ? data.value : data),
+      return oData.requestResponse<TResult>(request, this.http).pipe(      
         catchError(error => throwError(() => error.name + " " + error.message + " | " + (error.response | error.response.statusText) + ":" + (error.response | error.response.body)))
       );
     }
@@ -404,7 +418,7 @@ export interface ListWithCount<T> {
       return new EntitySet(relatedEntitySetName, this.Address + `(${key})/`, 'id', this.http);
     }
 
-    Action<TResult>(methodName: string, key?: string, value?: any): Observable<TResult> {
+    Action$Response<T, TResult>(methodName: string, key?: string, value?: T): Observable<HttpResponse<TResult>> {
       const requri = this.Address + (key ? `(${key})` : '') + `/${methodName}`;
       this.emptyQuery();
       let request: Request = {
@@ -413,8 +427,7 @@ export interface ListWithCount<T> {
         requestUri: requri,
         data: value && Object.keys(value).length ? value : null
       }
-      return oData.request<TResult>(request, this.http).pipe(
-        map((data: any) => data && data.value ? data.value : data),
+      return oData.requestResponse<TResult>(request, this.http).pipe(      
         catchError(error => throwError(() => error.name + " " + error.message + " | " + (error.response | error.response.statusText) + ":" + (error.response | error.response.body)))
       );
     }
@@ -443,11 +456,24 @@ export class oData {
   static request<TResult>(request: Request, http: HttpClient): Observable<TResult> {
     const headers = new HttpHeaders();
     Object.entries(request.headers).forEach(entry => headers.append(entry[0], entry[1]));
-    return http.request<TResult>(request.method, request.requestUri, {
-    headers: headers,
-    body: request.data,
-    responseType: 'json'
-    });
+    
+    return oData.requestResponse<TResult>(request, http).pipe(
+      map(response => response.body as TResult)
+    );
+  }
+
+  static requestResponse<TResult>(request: Request, http: HttpClient): Observable<HttpResponse<TResult>> {
+    const headers = new HttpHeaders();
+    Object.entries(request.headers).forEach(entry => headers.append(entry[0], entry[1]));
+
+    return http.request<TResult>(
+      request.method,
+      request.requestUri,
+      {
+        headers: headers,
+        body: request.data,
+        observe: 'response'
+      });
   }
 
   static quoteString(value: any): string {
