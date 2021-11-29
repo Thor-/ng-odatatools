@@ -65,7 +65,7 @@ export abstract class ODataQueryFilterOptions<T> extends ODataQueryOptionsGetSin
       );
     }
 
-    Action<T, TResult>(methodName: string, key: string, value?: T): Observable<TResult> {
+    Action<TResult>(methodName: string, key: string, value?: any): Observable<TResult> {
       return this.Action$Response(methodName, key, value).pipe(
         map(response => response.body as T),
         map((data: any) => data && data.value ? data.value : data),
@@ -74,7 +74,7 @@ export abstract class ODataQueryFilterOptions<T> extends ODataQueryOptionsGetSin
 
     abstract Function$Response<TResult>(methodName: string, key: string, params?: any): Observable<HttpResponse<TResult>>;
 
-    abstract Action$Response<T, TResult>(methodName: string, key?: string, value?: T): Observable<HttpResponse<TResult>>;
+    abstract Action$Response<TResult>(methodName: string, key?: string, value?: T): Observable<HttpResponse<TResult>>;
 
     /**
         * Selects properties on the elements. Works on Get() and Get(id).
@@ -418,7 +418,7 @@ export interface ListWithCount<T> {
       return new EntitySet(relatedEntitySetName, this.Address + `(${key})/`, 'id', this.http);
     }
 
-    Action$Response<T, TResult>(methodName: string, key?: string, value?: T): Observable<HttpResponse<TResult>> {
+    Action$Response<TResult>(methodName: string, key?: string, value?: any): Observable<HttpResponse<TResult>> {
       const requri = this.Address + (key ? `(${key})` : '') + `/${methodName}`;
       this.emptyQuery();
       let request: Request = {
