@@ -32,7 +32,7 @@ hb.registerHelper('splitNameSpaceAndType', (value) => {
 
 import * as path from 'path';
 
-import {} from "./outtypes";
+import { } from "./outtypes";
 import {
   createHeader,
   GeneratorSettings,
@@ -100,7 +100,7 @@ function getProxy(
 ): IODataSchema[] {
   // get the entity container
   let schemas: Schema[];
-  try { 
+  try {
     schemas = metadata.Schema;
   } catch (error) {
     throw new Error("Could not find any entity container on OData Service");
@@ -216,7 +216,7 @@ function getProxy(
       };
 
       for (const set of ec.EntitySet) {
-        
+
         const eset: IEntitySet = {
           EntityType: allBaseTypes.entity.find(x => {
             return x.Fullname === set.$.EntityType;
@@ -226,13 +226,13 @@ function getProxy(
           Name: set.$.Name,
           NavigationPropertyBindings: set.NavigationPropertyBinding
             ? set.NavigationPropertyBinding.map<INavigationPropertyBinding>(
-                x => {
-                  return {
-                    Path: x.$.Path,
-                    Target: x.$.Target
-                  };
-                }
-              )
+              x => {
+                return {
+                  Path: x.$.Path,
+                  Target: x.$.Target
+                };
+              }
+            )
             : [],
           Actions: [],
           Functions: []
@@ -241,7 +241,7 @@ function getProxy(
         eset.Functions = getBoundFunctionsToCollections(eset, allBaseTypes);
         curSchema.EntityContainer.EntitySets.push(eset);
       }
-      
+
       getUnboundMethods(curSchema, schema);
       getBoundMethodsToEntities(curSchema, schema);
     }
@@ -308,7 +308,9 @@ function getBoundMethodsToEntities(meta: IODataSchema, schema: Schema): void {
   if (schema.Action) {
     for (const action of schema.Action) {
       for (const entitiSet of meta.EntityContainer?.EntitySets) {
-        if (entitiSet.EntityType.Fullname == action.Parameter[0].$.Type) {
+        const methodEntityType = action.Parameter[0].$.Type.startsWith("Collection(") ?
+          getEntityTypeFromBindingParameter(action.Parameter[0].$.Type) : action.Parameter[0].$.Type;
+        if (entitiSet.EntityType.Fullname == methodEntityType) {
           const m = getBoundMethod(action, entitiSet.EntityType);
           if (m && !m.IsBoundToCollection) {
             entitiSet.Actions.push(m);
@@ -341,7 +343,7 @@ function getBoundActionsToCollections(
     if (action.IsBoundToCollection) {
       const boundTypeName = action.Parameters[0].Type.Type;
       if (set.EntityType.Fullname === boundTypeName) {
-        ret.push(action);
+        ret.push({...action, Parameters: action.Parameters.filter((_, i) => i > 0)});
       }
     }
   }
@@ -355,7 +357,7 @@ function getBoundFunctionsToCollections(
   const ret: IMethod[] = [];
   for (const func of schema.functions) {
     if (func.IsBoundToCollection) {
-      const boundTypeName = func.Parameters[0]?.Type.Type;      
+      const boundTypeName = func.Parameters[0]?.Type.Type;
       if (set.EntityType.Fullname === boundTypeName) {
         // Exclude first bindingParameter from collection bounded function
         func.Parameters = func.Parameters.filter((_, i) => i > 0);
@@ -370,12 +372,13 @@ function getUnboundMethod(method: Method): IMethod {
   if (!method) {
     return undefined;
   }
-  if (method.$.IsBound) {
-    return undefined;
-  }
+  // if (!method.$.IsBound) {
+  //   return undefined;
+  // }
+  const collectionMatch = method.Parameter[0].$.Type.match(/^(Collection\()?(.*[^\)])\)?$/);
+  const isCollectionBound = collectionMatch[1] === "Collection(";
   return {
-    IsBoundToCollection:
-      method.$.IsBound && method.Parameter[0].$.Name.startsWith("Collection("),
+    IsBoundToCollection: isCollectionBound,
     FullName: method.Namespace,
     IsBound: method.$.IsBound,
     Name: method.$.Name,
@@ -401,9 +404,7 @@ function getBoundMethod(method: Method, type: IEntityType): IMethod {
     return undefined;
   }
   // get first parameter, which is the binding parameter and check if it is a collection
-  const collectionMatch = method.Parameter[0].$.Type.match(
-    /^(Collection\()?(.*[^\)])\)?$/
-  );
+  const collectionMatch = method.Parameter[0].$.Type.match(/^(Collection\()?(.*[^\)])\)?$/);
   const isCollectionBound = collectionMatch[1] === "Collection(";
   if (collectionMatch[2] === type.Fullname) {
     const keyParameter = {
@@ -518,7 +519,7 @@ function parseTemplate(
   schemas: IODataSchema[],
   args: CliArguments
 ): void {
- 
+
   const proxy = {
     schemas,
     Header: createHeader(generatorSettings)
@@ -541,7 +542,7 @@ function parseTemplate(
     fs.emptyDirSync(args.outDir);
 
     fs.writeFileSync(`${args.outDir}/Base.ts`, compiledTemplate(schemas));
-    
+
     const compiledModuleTemplate = hb.compile(moduleTemplate, {
       noEscape: true
     });
@@ -557,7 +558,7 @@ function parseTemplate(
         }
       ));
     });
-    
+
     ncp(path.resolve(__dirname, 'templates/edmTypes.ts'), `${args.outDir}/edmTypes.ts`, (err) => {
       if (err) {
         return console.error(err);
@@ -565,7 +566,7 @@ function parseTemplate(
       console.log('done!');
     });
 
-  } catch(e) {
+  } catch (e) {
     console.error(e)
   }
 }

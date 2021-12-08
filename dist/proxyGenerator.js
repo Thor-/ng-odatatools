@@ -223,7 +223,9 @@ function getBoundMethodsToEntities(meta, schema) {
     if (schema.Action) {
         for (const action of schema.Action) {
             for (const entitiSet of (_a = meta.EntityContainer) === null || _a === void 0 ? void 0 : _a.EntitySets) {
-                if (entitiSet.EntityType.Fullname == action.Parameter[0].$.Type) {
+                const methodEntityType = action.Parameter[0].$.Type.startsWith("Collection(") ?
+                    getEntityTypeFromBindingParameter(action.Parameter[0].$.Type) : action.Parameter[0].$.Type;
+                if (entitiSet.EntityType.Fullname == methodEntityType) {
                     const m = getBoundMethod(action, entitiSet.EntityType);
                     if (m && !m.IsBoundToCollection) {
                         entitiSet.Actions.push(m);
@@ -252,7 +254,7 @@ function getBoundActionsToCollections(set, schema) {
         if (action.IsBoundToCollection) {
             const boundTypeName = action.Parameters[0].Type.Type;
             if (set.EntityType.Fullname === boundTypeName) {
-                ret.push(action);
+                ret.push(Object.assign(Object.assign({}, action), { Parameters: action.Parameters.filter((_, i) => i > 0) }));
             }
         }
     }
@@ -277,11 +279,13 @@ function getUnboundMethod(method) {
     if (!method) {
         return undefined;
     }
-    if (method.$.IsBound) {
-        return undefined;
-    }
+    // if (!method.$.IsBound) {
+    //   return undefined;
+    // }
+    const collectionMatch = method.Parameter[0].$.Type.match(/^(Collection\()?(.*[^\)])\)?$/);
+    const isCollectionBound = collectionMatch[1] === "Collection(";
     return {
-        IsBoundToCollection: method.$.IsBound && method.Parameter[0].$.Name.startsWith("Collection("),
+        IsBoundToCollection: isCollectionBound,
         FullName: method.Namespace,
         IsBound: method.$.IsBound,
         Name: method.$.Name,

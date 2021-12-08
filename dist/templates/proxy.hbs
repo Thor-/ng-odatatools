@@ -51,7 +51,7 @@ export abstract class ODataQueryOptionsGetSingle<T> extends ODataQueryOptionBase
 export abstract class ODataQueryFilterOptions<T> extends ODataQueryOptionsGetSingle<T> {
 
     abstract Get(): Observable<T[]>;
-    abstract Get(id: string): Observable<T>;
+    abstract Get(id: string | number): Observable<T>;
 
     abstract Count(): Observable<number>;
 
@@ -263,11 +263,12 @@ export interface ListWithCount<T> {
      *
      * @memberof EntitySet
      */
-    Get(id: string): Observable<T>;
-    Get(id?: string): Observable<T | T[]> {
+    Get(id: string | number): Observable<T>;
+    Get(id?: string | number): Observable<T | T[]> {
       let requri: string;
-      if (id) {
-        requri = this.Address + "(" + id + ")";
+      let idStr = id + '';
+      if (idStr) {
+        requri = this.Address + "(" + idStr + ")";
       } else {
         requri = this.Address;
       }
@@ -280,7 +281,7 @@ export interface ListWithCount<T> {
       }
 
       return oData.request<T | T[]>(request, this.http).pipe(
-        map((data: any) => id ? data : data.value)
+        map((data: any) => idStr ? data : data.value)
       );
     }
 
