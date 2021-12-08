@@ -266,7 +266,7 @@ export interface ListWithCount<T> {
     Get(id: string | number): Observable<T>;
     Get(id?: string | number): Observable<T | T[]> {
       let requri: string;
-      let idStr = id + '';
+      let idStr = id !== undefined && id !== null ? id.toString() : '';
       if (idStr) {
         requri = this.Address + "(" + idStr + ")";
       } else {
