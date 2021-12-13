@@ -148,6 +148,7 @@ function getEntityTypeInterface(type, schema) {
         Properties: [],
         NavigationProperties: [],
         BaseTypeFullName: type.$.BaseType || undefined,
+        BaseTypeNamespace: getBaseTypeNamespace(type.$.BaseType),
         OpenType: type.$.OpenType || false,
         Actions: [],
         Functions: [],
@@ -175,3 +176,12 @@ function getEntityTypeInterface(type, schema) {
     return p;
 }
 exports.getEntityTypeInterface = getEntityTypeInterface;
+function getBaseTypeNamespace(baseType) {
+    if (!baseType) {
+        return null;
+    }
+    const arr = baseType.split('.');
+    const len = arr.length;
+    return arr.filter((_, i) => i < len - 1).join('') + '.' + arr[len - 1];
+}
+exports.getBaseTypeNamespace = getBaseTypeNamespace;

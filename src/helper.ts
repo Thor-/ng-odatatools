@@ -152,6 +152,7 @@ export function getEntityTypeInterface(type: EntityType, schema: Schema): IEntit
         Properties: [],
         NavigationProperties: [],
         BaseTypeFullName: type.$.BaseType || undefined,
+        BaseTypeNamespace: getBaseTypeNamespace(type.$.BaseType),
         OpenType: type.$.OpenType || false,
         Actions: [],
         Functions: [],
@@ -177,4 +178,13 @@ export function getEntityTypeInterface(type: EntityType, schema: Schema): IEntit
             });
         }
     return p as IEntityType;
+}
+
+export function getBaseTypeNamespace(baseType: string): string | null {
+    if (!baseType) {
+        return null;
+    }
+    const arr = baseType.split('.');
+    const len = arr.length;
+    return arr.filter((_, i) => i < len - 1).join('') + '.' + arr[len - 1];
 }

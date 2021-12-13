@@ -22,6 +22,7 @@ function getEdmTypes(schema, generatorSettings) {
                 Name: type.$.Name,
                 Properties: [],
                 BaseTypeFullName: type.$.BaseType || undefined,
+                BaseTypeNamespace: helper_1.getBaseTypeNamespace(type.$.BaseType),
                 OpenType: type.$.OpenType || false,
             };
             if (type.Property)

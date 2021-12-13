@@ -1,5 +1,6 @@
 import {
     GeneratorSettings,
+    getBaseTypeNamespace,
     getEntityTypeInterface,
     getType
 } from './helper';
@@ -31,6 +32,7 @@ export function getEdmTypes(schema: Schema, generatorSettings: GeneratorSettings
                 Name: type.$.Name,
                 Properties: [],
                 BaseTypeFullName: type.$.BaseType || undefined,
+                BaseTypeNamespace: getBaseTypeNamespace(type.$.BaseType),
                 OpenType: type.$.OpenType || false,
             }
             if (type.Property)

@@ -10,7 +10,7 @@ import * as {{joinNamespace this.Namespace}} from './{{joinNamespace this.Namesp
 {{/each}}
 
 {{#each schema.EntityTypes}}
-export interface {{this.Name}}{{#if this.BaseTypeFullName}} extends {{this.BaseTypeFullName}}{{/if}} {
+export interface {{this.Name}}{{#if this.BaseTypeNamespace}} extends {{this.BaseTypeNamespace}}{{/if}} {
     {{#each this.Properties}}
     {{this.Name}}: {{this.Type.Name}}{{#if this.Type.IsCollection}}[]{{/if}};
     {{/each}}
